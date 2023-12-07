@@ -11,9 +11,40 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+
+	// ワールドトランスフォームの初期化
+	worldTransform_.Initialize();
+	// ビュープロジェクションの初期化
+	viewProjection_.Initialize();
+	// デバックカメラの生成
+	debugCamera_ = std::make_unique<DebugCamera>(1280, 720);
+	// 地面の生成
+	ground_ = std::make_unique<Ground>();
+	// 3Dモデルの生成
+	groundModel_.reset(Model::CreateFromOBJ("ground", true));
+	// 地面の初期化
+	ground_->Initialize(groundModel_.get());
 }
 
-void GameScene::Update() {}
+void GameScene::Update() {
+
+
+
+#ifdef _DEBUG 
+	if (input_->TriggerKey(DIK_C)) { isDebugCameraActive_ = true; }
+	else if (input_->TriggerKey(DIK_B)) {
+		isDebugCameraActive_ = false;
+	}
+#endif 
+if (isDebugCameraActive_) {
+		debugCamera_->Update();
+		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
+} else {
+		viewProjection_.TransferMatrix();
+}
+}
 
 void GameScene::Draw() {
 
@@ -41,7 +72,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-
+	ground_->Draw(viewProjection_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion

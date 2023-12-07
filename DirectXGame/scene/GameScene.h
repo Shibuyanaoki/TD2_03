@@ -7,6 +7,8 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Ground.h"
+#include "DebugCamera.h"
 
 /// <summary>
 /// ゲームシーン
@@ -43,6 +45,20 @@ private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
+
+	// ワールドトランスフォーム
+	WorldTransform worldTransform_;
+	// ビュープロジェクション
+	ViewProjection viewProjection_;
+
+	// デバックカメラ
+	std::unique_ptr<DebugCamera> debugCamera_;
+	bool isDebugCameraActive_;
+
+	// 3Dモデル
+	std::unique_ptr<Model> groundModel_ = nullptr;
+	// 地面
+	std::unique_ptr<Ground> ground_;
 
 	/// <summary>
 	/// ゲームシーン用
