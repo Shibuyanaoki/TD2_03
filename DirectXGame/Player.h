@@ -8,20 +8,41 @@
 #include "WorldTransform.h"
 class Player {
 public:
-	void Initialize();
+	void Initialize(Model* model_);
 
 	void Update();
 
-	void Draw();
+	void Draw(ViewProjection& viewProjection_);
+
+	void SetViewProjection(const ViewProjection* viewProjection) {
+		viewProjection_ = viewProjection;
+	}
+
+	// ワールドトランスフォーム取得
+	const WorldTransform& GetWorldTransform();
+
+	// ワールド座標を取得
+	Vector3 GetWorldPosition();
+
+	// カメラの向きと自機の向きを合わせる
+	void SetViewRotate(const Vector3 parent) { worldTransform_.rotation_ = parent; }
+
+	// getter
+	float GetRadius() { return radius_; }
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 
+	// モデル
+	Model* model_ = nullptr;
+
 	WorldTransform worldTransform_;
 
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
+
+	float radius_ = 2;
 
 };
