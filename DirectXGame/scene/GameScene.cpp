@@ -11,9 +11,42 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+
+	// ビューポートプロジェクションの初期化
+	viewProjection_.Initialize();
+
+	modelPlayer_.reset(Model::CreateFromOBJ("Player", true));
+
+	player_ = std::make_unique<Player>();
+
+	player_->Initialize(modelPlayer_.get());
+
+	// 追従カメラの生成と初期化処理
+	followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Initialize();
+
+	// 自キャラのワールドトランスフォームを追従カメラのセット
+	followCamera_->SetTarget(&player_->GetWorldTransform());
+	// 自キャラに追従カメラをアドレス渡し
+	player_->SetViewProjection(&followCamera_->GetViewProjection());
+
 }
 
-void GameScene::Update() {}
+void GameScene::Update() { 
+
+	// ビュープロジェクションの反映
+	viewProjection_.matView = followCamera_->GetViewProjection().matView;
+	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+
+	// カメラの向きと自機の向きをそろえる
+	player_->SetViewRotate(followCamera_->GetViewRotate());
+
+	player_->Update();
+
+	followCamera_->Update();
+
+	viewProjection_.UpdateViewMatrix();
+}
 
 void GameScene::Draw() {
 
@@ -41,6 +74,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
+	player_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

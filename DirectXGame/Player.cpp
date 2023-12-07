@@ -1,11 +1,16 @@
 ﻿#include "Player.h"
-#include "MT.h"
+#include <cassert>
 
-void Player::Initialize() {
+void Player::Initialize(Model* model) {
 
 	worldTransform_.Initialize();
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
+	//worldTransform_.rotation_.x = 10.0f;
+	// NULLポインタチェック
+	assert(model);
+	// 引数からデータを受け取る
+	model_ = model;
 
 }
 
@@ -53,4 +58,22 @@ void Player::Update() {
 	worldTransform_.UpdateMatrix();
 }
 
-void Player::Draw() {}
+void Player::Draw(ViewProjection& viewProjection) {
+	model_->Draw(worldTransform_, viewProjection); }
+
+const WorldTransform& Player::GetWorldTransform() {
+	// TODO: return ステートメントをここに挿入します
+
+	return worldTransform_;
+
+}
+
+Vector3 Player::GetWorldPosition() {
+	Vector3 worldPos;
+
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
+}
