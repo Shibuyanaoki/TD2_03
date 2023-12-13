@@ -18,9 +18,11 @@ void GameScene::Initialize() {
 	//プレイヤーのモデル	
 	modelPlayer_.reset(Model::CreateFromOBJ("Player", true));
 	// 敵のモデル
-	modelEnemy_.reset(Model::CreateFromOBJ("Player", true));
-	//地面のモデル
+	modelEnemy_.reset(Model::CreateFromOBJ("Enemy", true));
+	// 地面のモデル
 	modelground_.reset(Model::CreateFromOBJ("ground", true));
+	// スカイドームのモデル
+	modelSkydome_.reset(Model::CreateFromOBJ("skydome", true));
 
 	//プレイヤーの生成と初期化
 	player_ = std::make_unique<Player>();
@@ -37,6 +39,10 @@ void GameScene::Initialize() {
 	//地面の生成と初期化
 	ground_ = std::make_unique<Ground>();
 	ground_->Initialize(modelground_.get());
+
+	// スカイドームの生成と初期化
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Initialize(modelSkydome_.get());
 
 	// 自キャラのワールドトランスフォームを追従カメラのセット
 	followCamera_->SetTarget(&player_->GetWorldTransform());
@@ -57,6 +63,8 @@ void GameScene::Update() {
 	viewProjection_.UpdateViewMatrix();
 
 	ground_->Update();
+
+	skydome_->Update();
 
 	// ビュープロジェクションの反映
 	viewProjection_.matView = followCamera_->GetViewProjection().matView;
@@ -97,6 +105,7 @@ void GameScene::Draw() {
 	player_->Draw(viewProjection_);
 	enemy_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
+	skydome_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
