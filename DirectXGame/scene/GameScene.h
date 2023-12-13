@@ -69,6 +69,8 @@ private: // メンバ変数
 	std::unique_ptr<FollowCamera> followCamera_;
 	// 地面
 	std::unique_ptr<Ground> ground_;
+	//スカイドーム
+	std::unique_ptr<Skydome> skydome_;
 
 	/// <summary>
 	/// ゲームシーン用
