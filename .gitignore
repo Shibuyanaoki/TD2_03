@@ -347,8 +347,4 @@ NoviceResources/
 
 DirectXGame/DirectXGame.exe
 DirectXGame/imgui.ini
-DirectXGame/lib/KamataEngineLib/Debug/KamataEngineLib.lib
-DirectXGame/lib/KamataEngineLib/Debug/KamataEngineLib.pdb
-DirectXGame/lib/KamataEngineLib/Release/KamataEngineLib.lib
-DirectXGame/lib/KamataEngineLib/Release/KamataEngineLib.pdb
 Novice/imgui.ini
