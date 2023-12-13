@@ -18,16 +18,19 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 	// デバックカメラの生成
 	debugCamera_ = std::make_unique<DebugCamera>(1280, 720);
+
 	// 地面の生成
 	ground_ = std::make_unique<Ground>();
 	// 3Dモデルの生成
 	groundModel_.reset(Model::CreateFromOBJ("ground", true));
 	// 地面の初期化
 	ground_->Initialize(groundModel_.get());
+
 }
 
 void GameScene::Update() {
-
+	// 地面の更新
+	ground_->Update();
 #ifdef _DEBUG 
 	if (input_->TriggerKey(DIK_C)) { isDebugCameraActive_ = true; }
 	else if (input_->TriggerKey(DIK_B)) {
@@ -70,7 +73,9 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	
 	ground_->Draw(viewProjection_);
+
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion

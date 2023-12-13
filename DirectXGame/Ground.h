@@ -1,6 +1,5 @@
-﻿#pragma once
+﻿#include "Model.h"
 #include "WorldTransform.h"
-#include "Model.h"
 
 class Ground {
 public:
