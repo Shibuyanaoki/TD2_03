@@ -15,28 +15,37 @@ void GameScene::Initialize() {
 	// ビューポートプロジェクションの初期化
 	viewProjection_.Initialize();
 
+	//プレイヤーのモデル	
 	modelPlayer_.reset(Model::CreateFromOBJ("Player", true));
+	// 敵のモデル
+	modelEnemy_.reset(Model::CreateFromOBJ("Player", true));
+	//地面のモデル
+	modelground_.reset(Model::CreateFromOBJ("ground", true));
 
+	//プレイヤーの生成と初期化
 	player_ = std::make_unique<Player>();
-
 	player_->Initialize(modelPlayer_.get());
+
+	//敵の生成と初期化
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize(modelEnemy_.get());
 
 	// 追従カメラの生成と初期化処理
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
 
+	//地面の生成と初期化
+	ground_ = std::make_unique<Ground>();
+	ground_->Initialize(modelground_.get());
+
 	// 自キャラのワールドトランスフォームを追従カメラのセット
 	followCamera_->SetTarget(&player_->GetWorldTransform());
-	// 自キャラに追従カメラをアドレス渡し
+	// 自キャラのビュープロジェクションに追従カメラのビュープロジェクションをセット
 	player_->SetViewProjection(&followCamera_->GetViewProjection());
 
 }
 
 void GameScene::Update() { 
-
-	// ビュープロジェクションの反映
-	viewProjection_.matView = followCamera_->GetViewProjection().matView;
-	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 
 	// カメラの向きと自機の向きをそろえる
 	player_->SetViewRotate(followCamera_->GetViewRotate());
@@ -46,6 +55,16 @@ void GameScene::Update() {
 	followCamera_->Update();
 
 	viewProjection_.UpdateViewMatrix();
+
+	ground_->Update();
+
+	// ビュープロジェクションの反映
+	viewProjection_.matView = followCamera_->GetViewProjection().matView;
+	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+
+	// ビュープロジェクション行列の転送
+	viewProjection_.TransferMatrix();
+
 }
 
 void GameScene::Draw() {
@@ -76,6 +95,8 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player_->Draw(viewProjection_);
+	enemy_->Draw(viewProjection_);
+	ground_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

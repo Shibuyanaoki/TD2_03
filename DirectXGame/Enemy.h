@@ -6,13 +6,13 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-class Player {
+class Enemy {
 public:
 	void Initialize(Model* model);
 
 	void Update();
 
-	void Draw(ViewProjection& viewProjection_);
+	void Draw(ViewProjection& viewProjection);
 
 	void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
@@ -44,5 +44,7 @@ private:
 	const ViewProjection* viewProjection_ = nullptr;
 
 	float radius_ = 2;
+
+
 
 };

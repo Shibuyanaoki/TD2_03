@@ -8,7 +8,10 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "FollowCamera.h"
+#include "Skydome.h"
+#include "Ground.h"
 
 /// <summary>
 /// ゲームシーン
@@ -51,11 +54,21 @@ private: // メンバ変数
 
 	// 自キャラの3Dモデル
 	std::unique_ptr<Model> modelPlayer_;
-
+	// 敵の3Dモデル
+	std::unique_ptr<Model> modelEnemy_;
+	// Skydomeの3Dモデル
+	std::unique_ptr<Model> modelSkydome_;
+	// 地面の3Dモデル
+	std::unique_ptr<Model> modelground_;
+	
 	// 自キャラ
 	std::unique_ptr<Player> player_;
+	//敵
+	std::unique_ptr<Enemy> enemy_;
 	// 追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
+	// 地面
+	std::unique_ptr<Ground> ground_;
 
 	/// <summary>
 	/// ゲームシーン用
