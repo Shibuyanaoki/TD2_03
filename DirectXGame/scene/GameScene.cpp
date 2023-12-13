@@ -62,9 +62,9 @@ void GameScene::Update() {
 
 	viewProjection_.UpdateViewMatrix();
 
-	ground_->Update();
-
 	skydome_->Update();
+
+	ground_->Update();
 
 	// ビュープロジェクションの反映
 	viewProjection_.matView = followCamera_->GetViewProjection().matView;
@@ -104,8 +104,8 @@ void GameScene::Draw() {
 
 	player_->Draw(viewProjection_);
 	enemy_->Draw(viewProjection_);
-	ground_->Draw(viewProjection_);
 	skydome_->Draw(viewProjection_);
+	ground_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
