@@ -1,5 +1,7 @@
 #include "GameScene.h"
 #include "TextureManager.h"
+#include "ImGuiManager.h"
+#include <math.h>
 #include <cassert>
 
 GameScene::GameScene() {}
@@ -33,8 +35,11 @@ void GameScene::Initialize() {
 	enemy_->Initialize(modelEnemy_.get());
 
 	// 追従カメラの生成と初期化処理
-	followCamera_ = std::make_unique<FollowCamera>();
-	followCamera_->Initialize();
+	/*followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Initialize();*/
+
+	// デバッグカメラ
+	// ビュープロジェクション行列の転送debugCamera_ = std::make_unique<DebugCamera>();
 
 	//地面の生成と初期化
 	ground_ = std::make_unique<Ground>();
@@ -44,34 +49,48 @@ void GameScene::Initialize() {
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize(modelSkydome_.get());
 
-	// 自キャラのワールドトランスフォームを追従カメラのセット
-	followCamera_->SetTarget(&player_->GetWorldTransform());
-	// 自キャラのビュープロジェクションに追従カメラのビュープロジェクションをセット
-	player_->SetViewProjection(&followCamera_->GetViewProjection());
+	float degree = degree * (M_PI)
+
+	viewProjection_.translation_ = {0.0f,120.0f,0.0f};
+
+	viewProjection_.rotation_ = {90.0f, 0.0f, 0.0f};
 
 }
 
 void GameScene::Update() { 
 
 	// カメラの向きと自機の向きをそろえる
-	player_->SetViewRotate(followCamera_->GetViewRotate());
+	//player_->SetViewRotate(followCamera_->GetViewRotate());
 
 	player_->Update();
 
-	followCamera_->Update();
-
-	viewProjection_.UpdateViewMatrix();
+	//followCamera_->Update();
 
 	ground_->Update();
 
 	skydome_->Update();
 
-	// ビュープロジェクションの反映
-	viewProjection_.matView = followCamera_->GetViewProjection().matView;
-	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+	//debugCamera_->Update();
 
-	// ビュープロジェクション行列の転送
-	viewProjection_.TransferMatrix();
+	ImGui::Begin("Camera");
+	float Position[3] = {
+	    viewProjection_.translation_.x, viewProjection_.translation_.y,
+	    viewProjection_.translation_.z};
+
+	ImGui::SliderFloat3("Camera Translation", Position, -65.0f, 65.0f);
+
+	viewProjection_.translation_.x = Position[0];
+	viewProjection_.translation_.y = Position[1];
+	viewProjection_.translation_.z = Position[2];
+
+	ImGui::End();
+
+	//// ビュープロジェクションの反映
+	//viewProjection_.matView = followCamera_->GetViewProjection().matView;
+	//viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+
+	
+	viewProjection_.UpdateMatrix();
 
 }
 

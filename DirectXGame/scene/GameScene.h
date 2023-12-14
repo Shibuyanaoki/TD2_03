@@ -1,17 +1,18 @@
 #pragma once
 
 #include "Audio.h"
+#include "DebugCamera.h"
 #include "DirectXCommon.h"
+#include "Enemy.h"
+#include "FollowCamera.h"
+#include "Ground.h"
 #include "Input.h"
 #include "Model.h"
+#include "Player.h"
+#include "Skydome.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "Player.h"
-#include "Enemy.h"
-#include "FollowCamera.h"
-#include "Skydome.h"
-#include "Ground.h"
 
 /// <summary>
 /// ゲームシーン
@@ -60,17 +61,19 @@ private: // メンバ変数
 	std::unique_ptr<Model> modelSkydome_;
 	// 地面の3Dモデル
 	std::unique_ptr<Model> modelground_;
-	
+
 	// 自キャラ
 	std::unique_ptr<Player> player_;
-	//敵
+	// 敵
 	std::unique_ptr<Enemy> enemy_;
 	// 追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
 	// 地面
 	std::unique_ptr<Ground> ground_;
-	//スカイドーム
+	// スカイドーム
 	std::unique_ptr<Skydome> skydome_;
+	// デバックカメラ
+	//DebugCamer* debugCamera_ = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用

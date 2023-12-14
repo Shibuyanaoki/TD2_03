@@ -32,6 +32,8 @@ public:
 
 	void falling();
 
+	void Reverse();
+
 private:
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -46,5 +48,8 @@ private:
 	const ViewProjection* viewProjection_ = nullptr;
 
 	float radius_ = 2;
+
+	bool rightRotate = true;
+	bool leftRotate = false;
 
 };

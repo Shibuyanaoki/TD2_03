@@ -1,5 +1,6 @@
 ﻿#include "Player.h"
 #include "ImGuiManager.h"
+
 #include <cassert>
 
 void Player::Initialize(Model* model) {
@@ -15,6 +16,8 @@ void Player::Initialize(Model* model) {
 }
 
 void Player::Update() {
+
+	Reverse();
 
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
@@ -32,23 +35,23 @@ void Player::Update() {
 		    (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed, // Lスティックの縦成分
 		};
 
-		Matrix4x4 rotationXMatrix = MakeRotateXmatrix(viewProjection_->rotation_.x);
+		/*Matrix4x4 rotationXMatrix = MakeRotateXmatrix(viewProjection_->rotation_.x);
 		Matrix4x4 rotationYMatrix = MakeRotateYmatrix(viewProjection_->rotation_.y);
 		Matrix4x4 rotationZMatrix = MakeRotateZmatrix(viewProjection_->rotation_.z);
 		Matrix4x4 rotationXYZMatrix =
-		    Multiply(rotationXMatrix, Multiply(rotationYMatrix, rotationZMatrix));
+		    Multiply(rotationXMatrix, Multiply(rotationYMatrix, rotationZMatrix));*/
 
-		// 移動量に速さを反映
+		//// 移動量に速さを反映
 		move = Multiply(speed, Normalize(move));
 
 		// 移動量に速さを反映(θ度の移動ベクトル)
 		// rotation = (viewProjection_->rotation_.y);
 
-		move = Transform(move, rotationXYZMatrix);
+		//move = Transform(move, rotationXYZMatrix);
 
-		if (move.y != 0 || move.z != 0) {
+		/*if (move.y != 0 || move.z != 0) {
 			worldTransform_.rotation_.y = std::atan2(move.x, move.z);
-		}
+		}*/
 
 		// 移動
 		worldTransform_.translation_ = Add(worldTransform_.translation_, move);
@@ -68,6 +71,8 @@ void Player::Update() {
 	ImGui::End();
 
 	falling();
+
+	
 
 	// 行列を定数バッファに転送
 	worldTransform_.UpdateMatrix();
@@ -94,7 +99,14 @@ Vector3 Player::GetWorldPosition() {
 void Player::falling() {
 
 	if (worldTransform_.translation_.x >= 63 || worldTransform_.translation_.x <= -61 ||
-	    worldTransform_.translation_.z >= 61||worldTransform_.translation_.z<=-63) {
+	    worldTransform_.translation_.z >= 61 || worldTransform_.translation_.z <= -63) {
 		worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
+	}
+}
+
+void Player::Reverse() {
+
+	if (rightRotate == true) {
+		worldTransform_.rotation_.y += 0.5f;
 	}
 }
