@@ -28,7 +28,9 @@ public:
 	void SetViewRotate(const Vector3 parent) { worldTransform_.rotation_ = parent; }
 
 	// getter
-	float GetRadius() { return radius_; }
+	float GetRadius() { return radius_;}
+
+	void falling();
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;

@@ -1,4 +1,5 @@
 ﻿#include "Player.h"
+#include "ImGuiManager.h"
 #include <cassert>
 
 void Player::Initialize(Model* model) {
@@ -6,12 +7,11 @@ void Player::Initialize(Model* model) {
 	worldTransform_.Initialize();
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
-	//worldTransform_.rotation_.x = 10.0f;
-	// NULLポインタチェック
+	// worldTransform_.rotation_.x = 10.0f;
+	//  NULLポインタチェック
 	assert(model);
 	// 引数からデータを受け取る
 	model_ = model;
-
 }
 
 void Player::Update() {
@@ -54,19 +54,31 @@ void Player::Update() {
 		worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 	}
 
+	ImGui::Begin("Player");
+	float Position[3] = {
+	    worldTransform_.translation_.x, worldTransform_.translation_.y,
+	    worldTransform_.translation_.z};
+
+	ImGui::SliderFloat3("Player Translation", Position, -65.0f, 65.0f);
+
+	worldTransform_.translation_.x = Position[0];
+	worldTransform_.translation_.y = Position[1];
+	worldTransform_.translation_.z = Position[2];
+
+	ImGui::End();
+
+	falling();
+
 	// 行列を定数バッファに転送
 	worldTransform_.UpdateMatrix();
 }
 
-void Player::Draw(ViewProjection& viewProjection) {
-	model_->Draw(worldTransform_, viewProjection); 
-}
+void Player::Draw(ViewProjection& viewProjection) { model_->Draw(worldTransform_, viewProjection); }
 
 const WorldTransform& Player::GetWorldTransform() {
 	// TODO: return ステートメントをここに挿入します
 
 	return worldTransform_;
-
 }
 
 Vector3 Player::GetWorldPosition() {
@@ -77,4 +89,12 @@ Vector3 Player::GetWorldPosition() {
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
+}
+
+void Player::falling() {
+
+	if (worldTransform_.translation_.x >= 63 || worldTransform_.translation_.x <= -61 ||
+	    worldTransform_.translation_.z >= 61||worldTransform_.translation_.z<=-63) {
+		worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
+	}
 }
