@@ -52,7 +52,16 @@ class FollowCamera {
 
 	// ビューポートプロジェクション
 	ViewProjection viewProjection_;
+
+	bool isDebugCameraActive_ = false;
 	// 追従対象
 	const WorldTransform* target_ = nullptr;
+
+	// ゲームパッドの状態を得る変数
+	XINPUT_STATE joyState;
+
+	// 追従対象からカメラまでのオフセット
+	Vector3 offset = {0.0f, 0.0f, 30.0f};
+	Vector3 move = {0.0f, 0.0f, 0.0f};
 
 };

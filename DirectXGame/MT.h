@@ -119,3 +119,6 @@ Matrix4x4 MakeViewPortMatrix(
 
 // 座標返還
 Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
+
+//反射ベクトル
+float getRadian(float X1, float Z1, float X2, float Z2);

@@ -6,7 +6,8 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-class Enemy {
+#include "Base.h"
+class Enemy :public Base {
 public:
 	void Initialize(Model* model);
 
@@ -29,6 +30,9 @@ public:
 
 	// getter
 	float GetRadius() { return radius_; }
+
+	public: // オーバーライド
+	void OnCollision(Base* other) override;
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;

@@ -44,6 +44,11 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+
+	void OnCollisions();
+
+	void resetFlag();
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -59,7 +64,7 @@ private: // メンバ変数
 	// Skydomeの3Dモデル
 	std::unique_ptr<Model> modelSkydome_;
 	// 地面の3Dモデル
-	std::unique_ptr<Model> modelground_;
+	std::unique_ptr<Model> modelGround_;
 	
 	// 自キャラ
 	std::unique_ptr<Player> player_;
@@ -72,6 +77,14 @@ private: // メンバ変数
 	//スカイドーム
 	std::unique_ptr<Skydome> skydome_;
 
+
+	bool outFlag = false;
+	bool hitFlag = false;
+
+	int timeFlag = false;
+	int time = 0;
+
+	float radian = 0;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

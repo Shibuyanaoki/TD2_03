@@ -20,7 +20,7 @@ void GameScene::Initialize() {
 	// 敵のモデル
 	modelEnemy_.reset(Model::CreateFromOBJ("Enemy", true));
 	// 地面のモデル
-	modelground_.reset(Model::CreateFromOBJ("ground", true));
+	modelGround_.reset(Model::CreateFromOBJ("ground", true));
 	// スカイドームのモデル
 	modelSkydome_.reset(Model::CreateFromOBJ("skydome", true));
 
@@ -38,7 +38,7 @@ void GameScene::Initialize() {
 
 	//地面の生成と初期化
 	ground_ = std::make_unique<Ground>();
-	ground_->Initialize(modelground_.get());
+	ground_->Initialize(modelGround_.get());
 
 	// スカイドームの生成と初期化
 	skydome_ = std::make_unique<Skydome>();
@@ -54,7 +54,7 @@ void GameScene::Initialize() {
 void GameScene::Update() { 
 
 	// カメラの向きと自機の向きをそろえる
-	player_->SetViewRotate(followCamera_->GetViewRotate());
+	//player_->SetViewRotate(followCamera_->GetViewRotate());
 
 	player_->Update();
 
@@ -65,6 +65,8 @@ void GameScene::Update() {
 	skydome_->Update();
 
 	ground_->Update();
+
+	OnCollisions();
 
 	// ビュープロジェクションの反映
 	viewProjection_.matView = followCamera_->GetViewProjection().matView;
@@ -102,7 +104,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	player_->Draw(viewProjection_);
+	player_->Draw(viewProjection_,outFlag);
 	enemy_->Draw(viewProjection_);
 	skydome_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
@@ -123,4 +125,45 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::OnCollisions() {
+	float dx = player_->GetWorldPosition().x - enemy_->GetWorldPosition().x;
+	float dz = player_->GetWorldPosition().z - enemy_->GetWorldPosition().z;
+	float dy = player_->GetWorldPosition().y - enemy_->GetWorldPosition().y;
+	float dist = dx * dx + dy * dy + dz * dz;
+	dist = sqrtf(dist);
+	// 4 = 二つの円の半径足したもの
+	if (dist <= 4) {
+		//outFlag = true;
+		hitFlag = true;
+		timeFlag = true;
+		player_->OnCollision(enemy_.get());
+	} else {
+		outFlag = false;
+		
+	}
+
+	//Base* base = player_.get();
+	//base->GetWorldPosition();		// playerのGetWorldPosition()
+	//player_->GetWorldPosition();
+
+	//base->OnCollision(enemy_.get());
+
+	
+
+	 if (timeFlag) {
+		time++;
+		if(time >= 60) {
+			resetFlag();
+		}
+	 }
+
+}
+
+void GameScene::resetFlag() {
+	 timeFlag = false;
+	 hitFlag = false;
+	 outFlag = false;
+	 time = 0;
 }

@@ -383,3 +383,14 @@ Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
 	result.z /= w;
 	return result;
 }
+
+//反射ベクトル
+float getRadian(float X1,float Z1, float X2,float Z2) {
+	float w = X2 - X1;
+	float h = Z2 - Z1;
+	
+	// atan2f呼ぶだけでおしまい
+	return atan2f(h, w);
+}
+//べ字曲線
+//(1 - t) * (1 - t) * p1 + 2 * (1-t) * t* p2 + t *t * p3
