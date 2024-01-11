@@ -10,8 +10,10 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "FollowCamera.h"
+#include "DebugCamera.h"
 #include "Skydome.h"
 #include "Ground.h"
+#include "ImGuiManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -72,11 +74,17 @@ private: // メンバ変数
 	std::unique_ptr<Enemy> enemy_;
 	// 追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
+	//デバックカメラ
+	std::unique_ptr<DebugCamera> debugCamera_;
 	// 地面
 	std::unique_ptr<Ground> ground_;
 	//スカイドーム
 	std::unique_ptr<Skydome> skydome_;
 
+	bool isDebugCameraActive_ = false;
+
+	int collisionFlag_ = 1;
+	int collisionTime_ = 0;
 
 	bool outFlag = false;
 	bool hitFlag = false;

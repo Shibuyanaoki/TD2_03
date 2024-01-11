@@ -21,9 +21,9 @@ void FollowCamera::Update() { // ゲームパッドの状態を得る変数
 	//カメラ視点
 	// 押した方向で移動ベクトルを変更（左右）
 	if (input_->PushKey(DIK_J)) {
-		viewProjection_.rotation_.y += rotation;
-	} else if (input_->PushKey(DIK_L)) {
 		viewProjection_.rotation_.y -= rotation;
+	} else if (input_->PushKey(DIK_L)) {
+		viewProjection_.rotation_.y += rotation;
 	}
 	// 押した方向で移動ベクトルを変更（上下）
 	if (input_->PushKey(DIK_I)) {

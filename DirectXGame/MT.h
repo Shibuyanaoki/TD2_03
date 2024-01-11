@@ -59,6 +59,9 @@ Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
 /// <returns></returns>
 Vector3 Multiply(const float& v1, const Vector3& v2);
 
+
+Vector3 Multiply(float& v1, const Vector3& v2);
+
 /// <summary>
 ///
 /// </summary>

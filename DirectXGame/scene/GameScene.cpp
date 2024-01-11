@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "TextureManager.h"
 #include <cassert>
+#include <AxisIndicator.h>
 
 GameScene::GameScene() {}
 
@@ -49,6 +50,11 @@ void GameScene::Initialize() {
 	// 自キャラのビュープロジェクションに追従カメラのビュープロジェクションをセット
 	player_->SetViewProjection(&followCamera_->GetViewProjection());
 
+	debugCamera_ = std::make_unique<DebugCamera>(1280, 720);
+	// 軸方向表示の表示を有効にする
+	AxisIndicator::GetInstance()->SetVisible(true);
+	// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
+	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
 }
 
 void GameScene::Update() { 
@@ -68,12 +74,32 @@ void GameScene::Update() {
 
 	OnCollisions();
 
-	// ビュープロジェクションの反映
-	viewProjection_.matView = followCamera_->GetViewProjection().matView;
-	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+	if (input_->TriggerKey(DIK_LSHIFT) && isDebugCameraActive_ == false) {
+		isDebugCameraActive_ = true;
+	} else if (input_->TriggerKey(DIK_LSHIFT) && isDebugCameraActive_ == true) {
+		isDebugCameraActive_ = false;
+	}
 
-	// ビュープロジェクション行列の転送
-	viewProjection_.TransferMatrix();
+	// カメラ処理
+	if (isDebugCameraActive_ == true) {
+		debugCamera_->Update();
+		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+		// ビュープロジェクション行列の転送
+		viewProjection_.TransferMatrix();
+	} else {
+		followCamera_->Update();
+
+		viewProjection_.matView = followCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+
+		
+		viewProjection_.TransferMatrix();
+	}
+	ImGui::Begin("Collision");
+	ImGui::InputInt("CollisionTime", &collisionTime_);
+	ImGui::InputInt("CollisionFlag", &collisionFlag_);
+	ImGui::End();
 
 }
 
@@ -138,12 +164,22 @@ void GameScene::OnCollisions() {
 		//outFlag = true;
 		hitFlag = true;
 		timeFlag = true;
-		player_->OnCollision(enemy_.get());
+		if (collisionFlag_ == 1) {
+			player_->OnCollision(enemy_.get());
+			collisionFlag_ = 0;
+		}
 	} else {
 		outFlag = false;
 		
 	}
 
+	if (collisionFlag_ == 0) {
+		collisionTime_++;
+	}
+	if (collisionTime_ >= 60) {
+		collisionFlag_ = 1;
+		collisionTime_ = 0;
+	}
 	//Base* base = player_.get();
 	//base->GetWorldPosition();		// playerのGetWorldPosition()
 	//player_->GetWorldPosition();

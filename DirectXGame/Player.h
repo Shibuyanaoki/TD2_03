@@ -9,6 +9,7 @@
 #include "WorldTransform.h"
 #include "math.h"
 
+
 class Player : public Base {
 public:
 	void Initialize(Model* model);
@@ -20,7 +21,7 @@ public:
 	void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
 	}
-	void SetMove(Vector3 setMove) { setMove = move; }
+	//void SetMove(Vector3 setMove) { setMove = move; }
 	// ワールドトランスフォーム取得
 	const WorldTransform& GetWorldTransform();
 
@@ -41,14 +42,15 @@ private:
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
-	Vector3 move{0, 0, 0};
+	
 	// モデル
 	Model* model_ = nullptr;
 
 	// WorldTransform worldTransform_;
 
+	Vector3 move_{0, 0, 0};
+	Vector3 keyMove_{0, 0, 0};
 	
-
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
 
@@ -56,5 +58,8 @@ private:
 
 	
 	float radian = 0;
-	Vector3 Position = {0.0f, 0.0f, -30.0f};
+	Vector3 position_ = {0.0f, 0.0f, -30.0f};
+
+	float rot;
+	float acceleration = 0.0f;
 };
