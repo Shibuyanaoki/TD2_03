@@ -103,31 +103,26 @@ void GameScene::Update() {
 	ImGui::InputInt("CollisionFlag", &collisionFlag_);
 	ImGui::End();
 
-void GameScene::Update() { 
-
-	// カメラの向きと自機の向きをそろえる
-	//player_->SetViewRotate(followCamera_->GetViewRotate());
-
-	player_->Update();
-
-	//followCamera_->Update();
-
-	ground_->Update();
-
-	skydome_->Update();
-
-	//debugCamera_->Update();
-
 	ImGui::Begin("Camera");
-	float Position[3] = {
+	float positionTranslation[3] = {
 	    viewProjection_.translation_.x, viewProjection_.translation_.y,
 	    viewProjection_.translation_.z};
 
-	ImGui::SliderFloat3("Camera Translation", Position, -65.0f, 65.0f);
+	float positionRotation[3] = {
+	    viewProjection_.rotation_.x, viewProjection_.rotation_.y,
+		viewProjection_.rotation_.z};
 
-	viewProjection_.translation_.x = Position[0];
-	viewProjection_.translation_.y = Position[1];
-	viewProjection_.translation_.z = Position[2];
+
+	ImGui::SliderFloat3("Camera Translation", positionTranslation, -65.0f, 65.0f);
+	ImGui::SliderFloat3("Camera Rotation", positionRotation, -5.0f, 5.0f);
+
+	viewProjection_.translation_.x = positionTranslation[0];
+	viewProjection_.translation_.y = positionTranslation[1];
+	viewProjection_.translation_.z = positionTranslation[2];
+
+	viewProjection_.rotation_.x = positionRotation[0];
+	viewProjection_.rotation_.y = positionRotation[1];
+	viewProjection_.rotation_.z = positionRotation[2];
 
 	ImGui::End();
 

@@ -49,6 +49,7 @@ private:
 	// WorldTransform worldTransform_;
 
 	Vector3 move_{0, 0, 0};
+	Vector3 joyMove_{0, 0, 0};
 	Vector3 keyMove_{0, 0, 0};
 	WorldTransform worldTransform_;
 
