@@ -55,7 +55,8 @@ private:
 	const ViewProjection* viewProjection_ = nullptr;
 
 	float radius_ = 2;
-
+	float rotationSpeed_ = 0.0f;
+	int  direction_ = 0;
 	
 	float radian = 0;
 	Vector3 position_ = {0.0f, 0.0f, -30.0f};

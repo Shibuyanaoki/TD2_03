@@ -1,6 +1,7 @@
 ﻿#include "Player.h"
 #include "MT.h"
 #include <cassert>
+#include <imgui.h>
 
 void Player::Initialize(Model* model) {
 
@@ -59,22 +60,45 @@ void Player::Update() {
 	// 移動量に速さを反映
 	move_ = Multiply(speed + acceleration, Normalize(keyMove_));
 
-	if (acceleration > 0.0f) {
-		acceleration -= 0.05f;
-		rot -= 0.10f;
-		keyMove_.x = -cosf(rot);
-		keyMove_.z = -sinf(rot);
+	if (direction_ == 0) {
+		if (acceleration > 0.0f) {
+			acceleration -= 0.01f;
+			rot -= 0.08f;
+			keyMove_.x = -cosf(rot);
+			keyMove_.z = -sinf(rot);
+			rotationSpeed_ -= 0.01f;
+		}
 	}
+	if (direction_ == 1) {
+		if (acceleration > 0.0f) {
+			acceleration -= 0.01f;
+			rot -= 0.08f;
+			keyMove_.x = +cosf(rot);
+			keyMove_.z = -sinf(rot);
+			rotationSpeed_ -= 0.01f;
+		}
+	}
+	
+	
 
 	if (move_.y != 0 || move_.z != 0) {
 		// worldTransform_.rotation_.y = std::atan2(move.x, move.z);
 	}
-	worldTransform_.rotation_.y += 0.02f;
-
+	if (direction_ == 0) {
+		worldTransform_.rotation_.y -= rotationSpeed_;
+	} 
+	if (direction_ == 1) {
+		worldTransform_.rotation_.y += rotationSpeed_;
+	}
 	// 移動
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move_);
 	// 行列を定数バッファに転送
 	worldTransform_.UpdateMatrix();
+
+	ImGui::Begin("rotation_");
+	ImGui::InputInt("Direction", &direction_);
+	//ImGui::InputInt("RotationSpeed", &rotationSpeed_);
+	ImGui::End();
 }
 
 void Player::Draw(ViewProjection& viewProjection, bool out) {
@@ -100,9 +124,11 @@ void Player::OnCollision(Base* other) {
 	keyMove_.z -= sinf(radian + 3.14f / 2) * 1.0f;
 	*/
 	// 反射角
-	rot = -(radian + 3.14f / 4);
-	acceleration = 1.0f;
+	
+		rot = -(radian + 3.14f / 4);
 
+	acceleration = 1.0f;
+	rotationSpeed_ = 0.1f;
 	// keyMove_.x = -cosf(radian + 3.14f / 4) * 1.0f;
 	// keyMove_.z = -sinf(radian + 3.14f / 4) * 1.0f;
 
