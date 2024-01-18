@@ -57,6 +57,10 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
+
+	viewProjection_.translation_ = {0.0f, 65.0f, -65.0f};
+
+	viewProjection_.rotation_ = {1.0f, 0.0f, 0.0f};
 }
 
 void GameScene::Update() { 
@@ -73,6 +77,8 @@ void GameScene::Update() {
 	skydome_->Update();
 
 	ground_->Update();
+
+	enemy_->Update(player_->GetDirection());
 
 	OnCollisions();
 
@@ -100,7 +106,7 @@ void GameScene::Update() {
 	}
 	ImGui::Begin("Collision");
 	ImGui::InputInt("CollisionTime", &collisionTime_);
-	ImGui::InputInt("CollisionFlag", &collisionFlag_);
+	ImGui::Checkbox("CollisionFlag", &collisionFlag_);
 	ImGui::End();
 
 	ImGui::Begin("Camera");
@@ -114,7 +120,7 @@ void GameScene::Update() {
 
 
 	ImGui::SliderFloat3("Camera Translation", positionTranslation, -65.0f, 65.0f);
-	ImGui::SliderFloat3("Camera Rotation", positionRotation, -5.0f, 5.0f);
+	ImGui::SliderFloat3("Camera Rotation", positionRotation, 0.0f, 1.0f);
 
 	viewProjection_.translation_.x = positionTranslation[0];
 	viewProjection_.translation_.y = positionTranslation[1];
@@ -186,43 +192,34 @@ void GameScene::Draw() {
 }
 
 void GameScene::OnCollisions() {
-	float dx = player_->GetWorldPosition().x - enemy_->GetWorldPosition().x;
-	float dz = player_->GetWorldPosition().z - enemy_->GetWorldPosition().z;
-	float dy = player_->GetWorldPosition().y - enemy_->GetWorldPosition().y;
-	float dist = dx * dx + dy * dy + dz * dz;
-	dist = sqrtf(dist);
+
+	float enemyDist  = CollisionDetection(player_->GetWorldPosition(), enemy_->GetWorldPosition());
 	// 4 = 二つの円の半径足したもの
-	if (dist <= 4) {
+	if (enemyDist <= 4) {
 		//outFlag = true;
 		hitFlag = true;
 		timeFlag = true;
-		if (collisionFlag_ == 1) {
+		if (collisionFlag_ == true) {
 			player_->OnCollision(enemy_.get());
-			collisionFlag_ = 0;
+			enemy_->OnCollision(player_.get());
+			collisionFlag_ = false;
 		}
 	} else {
 		outFlag = false;
 		
 	}
 
-	if (collisionFlag_ == 0) {
+	if (collisionFlag_ == false) {
 		collisionTime_++;
 	}
-	if (collisionTime_ >= 60) {
-		collisionFlag_ = 1;
+	if (collisionTime_ >= 30) {
+		collisionFlag_ = true;
 		collisionTime_ = 0;
 	}
-	//Base* base = player_.get();
-	//base->GetWorldPosition();		// playerのGetWorldPosition()
-	//player_->GetWorldPosition();
-
-	//base->OnCollision(enemy_.get());
-
 	
-
 	 if (timeFlag) {
 		time++;
-		if(time >= 60) {
+		if(time >= 30) {
 			resetFlag();
 		}
 	 }

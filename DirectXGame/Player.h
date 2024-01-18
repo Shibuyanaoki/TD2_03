@@ -34,6 +34,10 @@ public:
 	// getter
 	float GetRadius() { return radius_; }
 
+	bool GetDirection() { return direction_; }
+
+	Vector3 GetKeyMove() { return keyMove_; }
+
 public: // オーバーライド
 	void OnCollision(Base* other) override;
 	
@@ -59,7 +63,7 @@ private:
 
 	float radius_ = 2;
 	float rotationSpeed_ = 0.0f;
-	int  direction_ = 0;
+	bool  direction_ = false;
 
 	float radian = 0;
 	Vector3 position_ = {0.0f, 0.0f, -30.0f};

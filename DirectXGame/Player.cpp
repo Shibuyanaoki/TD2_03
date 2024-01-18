@@ -19,7 +19,17 @@ void Player::Initialize(Model* model) {
 }
 
 void Player::Update() {
+	if (input_->PushKey(DIK_R)) {
+		worldTransform_.translation_ = {0.0f, 0.0f, -30.0f};
+		move_ = {0, 0, 0};
+		keyMove_ = {0, 0, 0};
+	}
 
+	if (input_->TriggerKey(DIK_SPACE) && direction_ == 0) {
+		direction_ = 1;
+	} else if (input_->TriggerKey(DIK_SPACE) && direction_ == 1) {
+		direction_ = 0;
+	}
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
 	
@@ -66,19 +76,19 @@ void Player::Update() {
 		// 移動量に速さを反映
 		move_ = Multiply(speed + acceleration, Normalize(keyMove_));
 
-		if (direction_ == 0) {
+		if (direction_ == false) {
 			if (acceleration > 0.0f) {
 				acceleration -= 0.01f;
-				rot -= 0.08f;
+				rot -= 0.15f;
 				keyMove_.x = -cosf(rot);
 				keyMove_.z = -sinf(rot);
 				rotationSpeed_ -= 0.01f;
 			}
 		}
-		if (direction_ == 1) {
+	    if (direction_ == true) {
 			if (acceleration > 0.0f) {
 				acceleration -= 0.01f;
-				rot -= 0.08f;
+				rot -= 0.15f;
 				keyMove_.x = +cosf(rot);
 				keyMove_.z = -sinf(rot);
 				rotationSpeed_ -= 0.01f;
@@ -109,24 +119,19 @@ void Player::Update() {
 		//    }
 	 //   }
 
-		//
-
-		if (move_.y != 0 || move_.z != 0) {
-			// worldTransform_.rotation_.y = std::atan2(move.x, move.z);
-		}
-		if (direction_ == 0) {
+		if (direction_ == false) {
 			worldTransform_.rotation_.y -= rotationSpeed_;
 		}
-		if (direction_ == 1) {
+		if (direction_ == true) {
 			worldTransform_.rotation_.y += rotationSpeed_;
 		}
 		// 移動
 		worldTransform_.translation_ = Add(worldTransform_.translation_, move_);
 		// 行列を定数バッファに転送
 		worldTransform_.UpdateMatrix();
-
-		ImGui::Begin("rotation_");
-		ImGui::InputInt("Direction", &direction_);
+		ImGui::Begin("Rotation");
+	    ImGui::Checkbox(" Direction \n false = Right \n true = Left", &direction_);
+		//ImGui::InputInt("Direction", &direction_);
 		// ImGui::InputInt("RotationSpeed", &rotationSpeed_);
 		ImGui::End();
 
@@ -170,13 +175,3 @@ void Player::OnCollision(Base* other) {
 
 	// SetMove({cosf(radian * 3.14f / 2), 0.0f, sinf(radian * 3.14f / 2)});
 }
-//
-// Vector3 Player::GetWorldPosition() {
-//	Vector3 worldPos;
-//
-//	worldPos.x = worldTransform_.matWorld_.m[3][0];
-//	worldPos.y = worldTransform_.matWorld_.m[3][1];
-//	worldPos.z = worldTransform_.matWorld_.m[3][2];
-//
-//	return worldPos;
-//}

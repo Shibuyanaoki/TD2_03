@@ -400,6 +400,17 @@ float getRadian(float X1,float Z1, float X2,float Z2) {
 	// atan2f呼ぶだけでおしまい
 	return atan2f(h, w);
 }
+
+//当たり判定
+ float CollisionDetection(const Vector3& v1, const Vector3& v2) { 
+
+	Vector3 result{};
+	result.x = v1.x - v2.x;
+	result.y = v1.y - v2.y;
+	result.z = v1.z - v2.z;
+	float dist = Dot(result, result);
+	return dist = sqrtf(dist);
+}
 //べ字曲線
 //(1 - t) * (1 - t) * p1 + 2 * (1-t) * t* p2 + t *t * p3
 

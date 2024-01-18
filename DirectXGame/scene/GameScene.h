@@ -89,13 +89,13 @@ private: // メンバ変数
 
 	bool isDebugCameraActive_ = false;
 
-	int collisionFlag_ = 1;
+	bool collisionFlag_ = 1;
 	int collisionTime_ = 0;
 
 	bool outFlag = false;
 	bool hitFlag = false;
 
-	int timeFlag = false;
+	bool timeFlag = false;
 	int time = 0;
 
 	float radian = 0;
