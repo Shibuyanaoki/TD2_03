@@ -167,6 +167,14 @@ Vector3 Multiply(const float& v1, const Vector3& v2) {
 	return result;
 }
 
+Vector3 Multiply(float& v1, const Vector3& v2) {
+	Vector3 result{};
+	result.x = v1 * v2.x;
+	result.y = v1 * v2.y;
+	result.z = v1 * v2.z;
+	return result;
+}
+
 Vector3 Multiply(Vector3 vector, Matrix4x4 matrix) {
 	Vector3 result = {};
 
@@ -382,4 +390,30 @@ Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
 	result.y /= w;
 	result.z /= w;
 	return result;
+}
+
+//反射ベクトル
+float getRadian(float X1,float Z1, float X2,float Z2) {
+	float w = X2 - X1;
+	float h = Z2 - Z1;
+	
+	// atan2f呼ぶだけでおしまい
+	return atan2f(h, w);
+}
+//べ字曲線
+//(1 - t) * (1 - t) * p1 + 2 * (1-t) * t* p2 + t *t * p3
+
+const Vector3 GetBezierCurve(const Vector3 p1, const Vector3 p2, const Vector3 p3, float t) { 
+ Vector3 Bezier;
+
+	Bezier.x = (1 - t) * (1 - t) * p1.x + 2 * (1 - t) * t * p2.x + t * t * p3.x;
+	Bezier.y = (1 - t) * (1 - t) * p1.y + 2 * (1 - t) * t * p2.y + t * t * p3.y;
+	Bezier.z = (1 - t) * (1 - t) * p1.z + 2 * (1 - t) * t * p2.z + t * t * p3.z;
+
+	/*Bezier.x = (1 - t.x) * (1 - t.x) * p1.x + 2 * (1 - t.x) * t.x * p2.x + t.x * t.x * p3.x;
+	Bezier.y = (1 - t.y) * (1 - t.y) * p1.y + 2 * (1 - t.y) * t.y * p2.y + t.y * t.y * p3.y;
+	Bezier.z = (1 - t.z) * (1 - t.z) * p1.z + 2 * (1 - t.z) * t.z * p2.z + t.z * t.z * p3.z;*/
+	return Bezier;
+
+	
 }

@@ -13,6 +13,13 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Player.h"
+#include "Enemy.h"
+#include "FollowCamera.h"
+#include "DebugCamera.h"
+#include "Skydome.h"
+#include "Ground.h"
+#include "ImGuiManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -45,6 +52,11 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+
+	void OnCollisions();
+
+	void resetFlag();
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -60,21 +72,33 @@ private: // メンバ変数
 	// Skydomeの3Dモデル
 	std::unique_ptr<Model> modelSkydome_;
 	// 地面の3Dモデル
-	std::unique_ptr<Model> modelground_;
-
+	std::unique_ptr<Model> modelGround_;
+	
 	// 自キャラ
 	std::unique_ptr<Player> player_;
-	// 敵
+	//敵
 	std::unique_ptr<Enemy> enemy_;
 	// 追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
+	//デバックカメラ
+	std::unique_ptr<DebugCamera> debugCamera_;
 	// 地面
 	std::unique_ptr<Ground> ground_;
-	// スカイドーム
+	//スカイドーム
 	std::unique_ptr<Skydome> skydome_;
-	// デバックカメラ
-	//DebugCamer* debugCamera_ = nullptr;
 
+	bool isDebugCameraActive_ = false;
+
+	int collisionFlag_ = 1;
+	int collisionTime_ = 0;
+
+	bool outFlag = false;
+	bool hitFlag = false;
+
+	int timeFlag = false;
+	int time = 0;
+
+	float radian = 0;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

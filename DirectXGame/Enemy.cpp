@@ -31,3 +31,7 @@ Vector3 Enemy::GetWorldPosition() {
 
 	return worldPos;
 }
+
+void Enemy::OnCollision(Base* other) { 
+	other->GetWorldPosition();
+}
