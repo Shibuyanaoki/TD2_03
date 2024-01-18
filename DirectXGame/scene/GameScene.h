@@ -87,7 +87,7 @@ private: // メンバ変数
 	//スカイドーム
 	std::unique_ptr<Skydome> skydome_;
 
-	bool isDebugCameraActive_ = true;
+	bool isDebugCameraActive_ = false;
 
 	int collisionFlag_ = 1;
 	int collisionTime_ = 0;

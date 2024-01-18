@@ -22,24 +22,23 @@ void Player::Update() {
 
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
+	
+	// 速さ
+	const float speed = 0.3f;
+	if (input_->PushKey(DIK_W)) {
+		keyMove_.z += speed;
+	} else if (input_->PushKey(DIK_S)) {
+		keyMove_.z -= speed;
+	}
+	// 押した方向で移動ベクトルを変更（左右）
+	if (input_->PushKey(DIK_A)) {
+		keyMove_.x -= speed;
+	} else if (input_->PushKey(DIK_D)) {
+		keyMove_.x += speed;
+	}
 
-	// ゲームパッド状態取得、ゲームパッドが有効の場合if文が通る
-	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-
-		// 速さ
-		const float speed = 0.3f;
-		if (input_->PushKey(DIK_W)) {
-			keyMove_.z += speed;
-		} else if (input_->PushKey(DIK_S)) {
-			keyMove_.z -= speed;
-		}
-		// 押した方向で移動ベクトルを変更（左右）
-		if (input_->PushKey(DIK_A)) {
-			keyMove_.x -= speed;
-		} else if (input_->PushKey(DIK_D)) {
-			keyMove_.x += speed;
-		}
-
+	
+		
 		// ゲームパッド状態取得、ゲームパッドが有効の場合if文が通る
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			// 移動量
@@ -48,64 +47,71 @@ void Player::Update() {
 			    0.0f,
 			    (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed, // Lスティックの縦成分
 			};
+
+
+			
 		}
+
+
 		// Matrix4x4 rotationXMatrix = MakeRotateXmatrix(viewProjection_->rotation_.x);
 		Matrix4x4 rotationYMatrix = MakeRotateYmatrix(viewProjection_->rotation_.y);
 		// Matrix4x4 rotationZMatrix = MakeRotateZmatrix(viewProjection_->rotation_.z);
 		// Matrix4x4 rotationXYZMatrix =Multiply(rotationXMatrix, Multiply(rotationYMatrix,
 		// rotationZMatrix));
-		Matrix4x4 rotation = MakeRotateYmatrix(rot);
+		 rotation = MakeRotateYmatrix(rot);
 
 		// 移動量に速さを反映(θ度の移動ベクトル)
 		// rotation = (viewProjection_->rotation_.y);
 
-		// move_ = Transform(move_, rotationYMatrix);
-		move_ = Transform(keyMove_, rotation);
+		//move_ = Transform(move_, rotationYMatrix);
+
+		//move_ = Transform(keyMove_, rotation);
+		//
+		//// 移動量に速さを反映
+		//move_ = Multiply(speed + acceleration, Normalize(keyMove_));
+
+		//if (direction_ == 0) {
+		//	if (acceleration > 0.0f) {
+		//		acceleration -= 0.01f;
+		//		rot -= 0.08f;
+		//		keyMove_.x = -cosf(rot);
+		//		keyMove_.z = -sinf(rot);
+		//		rotationSpeed_ -= 0.01f;
+		//	}
+		//}
+		//if (direction_ == 1) {
+		//	if (acceleration > 0.0f) {
+		//		acceleration -= 0.01f;
+		//		rot -= 0.08f;
+		//		keyMove_.x = +cosf(rot);
+		//		keyMove_.z = -sinf(rot);
+		//		rotationSpeed_ -= 0.01f;
+		//	}
+		//}
+
 		move_ = Transform(joyMove_, rotation);
 
-		// 移動量に速さを反映
-		move_ = Multiply(speed + acceleration, Normalize(keyMove_));
+	    // 移動量に速さを反映
+	    move_ = Multiply(speed + acceleration, Normalize(joyMove_));
 
-		if (direction_ == 0) {
-			if (acceleration > 0.0f) {
-				acceleration -= 0.01f;
-				rot -= 0.08f;
-				keyMove_.x = -cosf(rot);
-				keyMove_.z = -sinf(rot);
-				rotationSpeed_ -= 0.01f;
-			}
-		}
-		if (direction_ == 1) {
-			if (acceleration > 0.0f) {
-				acceleration -= 0.01f;
-				rot -= 0.08f;
-				keyMove_.x = +cosf(rot);
-				keyMove_.z = -sinf(rot);
-				rotationSpeed_ -= 0.01f;
-			}
-		}
-
-		// 移動量に速さを反映
-		move_ = Multiply(speed + acceleration, Normalize(joyMove_));
-
-		if (direction_ == 0) {
-			if (acceleration > 0.0f) {
-				acceleration -= 0.01f;
-				rot -= 0.08f;
-				joyMove_.x = -cosf(rot);
-				joyMove_.z = -sinf(rot);
-				rotationSpeed_ -= 0.01f;
-			}
-		}
-		if (direction_ == 1) {
-			if (acceleration > 0.0f) {
-				acceleration -= 0.01f;
-				rot -= 0.08f;
-				joyMove_.x = +cosf(rot);
-				joyMove_.z = -sinf(rot);
-				rotationSpeed_ -= 0.01f;
-			}
-		}
+	    if (direction_ == 0) {
+		    if (acceleration > 0.0f) {
+			    acceleration -= 0.01f;
+			    rot -= 0.08f;
+			    joyMove_.x = -cosf(rot);
+			    joyMove_.z = -sinf(rot);
+			    rotationSpeed_ -= 0.01f;
+		    }
+	    }
+	    if (direction_ == 1) {
+		    if (acceleration > 0.0f) {
+			    acceleration -= 0.01f;
+			    rot -= 0.08f;
+			    joyMove_.x = +cosf(rot);
+			    joyMove_.z = -sinf(rot);
+			    rotationSpeed_ -= 0.01f;
+		    }
+	    }
 
 		
 
@@ -136,7 +142,7 @@ void Player::Update() {
 		ImGui::SliderFloat3("Player Translation", Position, -65.0f, 65.0f);
 		ImGui::End();*/
 	}
-}
+
 	
 void Player::Draw(ViewProjection& viewProjection, bool out) {
 

@@ -42,7 +42,7 @@ private:
 	// モデル
 	Model* model_ = nullptr;
 
-	WorldTransform worldTransform_;
+	//WorldTransform worldTransform_;
 
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;

@@ -47,11 +47,12 @@ private:
 	Model* model_ = nullptr;
 
 	// WorldTransform worldTransform_;
+	Matrix4x4 rotation;
 
 	Vector3 move_{0, 0, 0};
 	Vector3 joyMove_{0, 0, 0};
 	Vector3 keyMove_{0, 0, 0};
-	WorldTransform worldTransform_;
+	//WorldTransform worldTransform_;
 
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
