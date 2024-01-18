@@ -1,4 +1,6 @@
 ﻿#include "Player.h"
+#include "ImGuiManager.h"
+
 #include "MT.h"
 #include <cassert>
 #include <imgui.h>
@@ -21,8 +23,11 @@ void Player::Update() {
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
 
-	// 速さ
-	const float speed = 0.3f;
+	// ゲームパッド状態取得、ゲームパッドが有効の場合if文が通る
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+
+		// 速さ
+		const float speed = 0.3f;
 	if (input_->PushKey(DIK_W)) {
 		keyMove_.z += speed;
 	} else if (input_->PushKey(DIK_S)) {
@@ -45,14 +50,14 @@ void Player::Update() {
 		};
 	}
 	// Matrix4x4 rotationXMatrix = MakeRotateXmatrix(viewProjection_->rotation_.x);
-	Matrix4x4 rotationYMatrix = MakeRotateYmatrix(viewProjection_->rotation_.y);
+		Matrix4x4 rotationYMatrix = MakeRotateYmatrix(viewProjection_->rotation_.y);
 	// Matrix4x4 rotationZMatrix = MakeRotateZmatrix(viewProjection_->rotation_.z);
 	// Matrix4x4 rotationXYZMatrix =Multiply(rotationXMatrix, Multiply(rotationYMatrix,
 	// rotationZMatrix));
 	Matrix4x4 rotation = MakeRotateYmatrix(rot);
 
-	// 移動量に速さを反映(θ度の移動ベクトル)
-	// rotation = (viewProjection_->rotation_.y);
+		// 移動量に速さを反映(θ度の移動ベクトル)
+		// rotation = (viewProjection_->rotation_.y);
 
 	// move_ = Transform(move_, rotationYMatrix);
 	move_ = Transform(keyMove_, rotation);
@@ -67,7 +72,7 @@ void Player::Update() {
 			keyMove_.x = -cosf(rot);
 			keyMove_.z = -sinf(rot);
 			rotationSpeed_ -= 0.01f;
-		}
+	}
 	}
 	if (direction_ == 1) {
 		if (acceleration > 0.0f) {
@@ -78,8 +83,13 @@ void Player::Update() {
 			rotationSpeed_ -= 0.01f;
 		}
 	}
-	
-	
+
+	ImGui::Begin("Player");
+	float Position[3] = {
+	    worldTransform_.translation_.x, worldTransform_.translation_.y,
+	    worldTransform_.translation_.z};
+
+	ImGui::SliderFloat3("Player Translation", Position, -65.0f, 65.0f);
 
 	if (move_.y != 0 || move_.z != 0) {
 		// worldTransform_.rotation_.y = std::atan2(move.x, move.z);
@@ -99,8 +109,10 @@ void Player::Update() {
 	ImGui::InputInt("Direction", &direction_);
 	//ImGui::InputInt("RotationSpeed", &rotationSpeed_);
 	ImGui::End();
-}
 
+	falling();
+
+	
 void Player::Draw(ViewProjection& viewProjection, bool out) {
 
 	if (out == false) {

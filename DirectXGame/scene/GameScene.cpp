@@ -1,5 +1,7 @@
 #include "GameScene.h"
 #include "TextureManager.h"
+#include "ImGuiManager.h"
+#include <math.h>
 #include <cassert>
 #include <AxisIndicator.h>
 
@@ -100,6 +102,41 @@ void GameScene::Update() {
 	ImGui::InputInt("CollisionTime", &collisionTime_);
 	ImGui::InputInt("CollisionFlag", &collisionFlag_);
 	ImGui::End();
+
+void GameScene::Update() { 
+
+	// カメラの向きと自機の向きをそろえる
+	//player_->SetViewRotate(followCamera_->GetViewRotate());
+
+	player_->Update();
+
+	//followCamera_->Update();
+
+	ground_->Update();
+
+	skydome_->Update();
+
+	//debugCamera_->Update();
+
+	ImGui::Begin("Camera");
+	float Position[3] = {
+	    viewProjection_.translation_.x, viewProjection_.translation_.y,
+	    viewProjection_.translation_.z};
+
+	ImGui::SliderFloat3("Camera Translation", Position, -65.0f, 65.0f);
+
+	viewProjection_.translation_.x = Position[0];
+	viewProjection_.translation_.y = Position[1];
+	viewProjection_.translation_.z = Position[2];
+
+	ImGui::End();
+
+	//// ビュープロジェクションの反映
+	//viewProjection_.matView = followCamera_->GetViewProjection().matView;
+	//viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+
+	
+	viewProjection_.UpdateMatrix();
 
 }
 

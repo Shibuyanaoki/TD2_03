@@ -12,7 +12,9 @@ void FollowCamera::Initialize() {
 }
 
 void FollowCamera::Update() { // ゲームパッドの状態を得る変数
-	
+	// ゲームパッドの状態を得る変数
+	XINPUT_STATE joyState;
+
 	// 速さ
 	const float rotation = 0.05f;
 	const float translation = 0.5f;
@@ -55,6 +57,9 @@ void FollowCamera::Update() { // ゲームパッドの状態を得る変数
 	// ゲームパッド状態取得、ゲームパッドが有効の場合if文が通る
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 
+		// 速さ
+		const float rotation = 0.3f;
+
 		viewProjection_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotation;
 	}
 
@@ -94,6 +99,7 @@ void FollowCamera::Update() { // ゲームパッドの状態を得る変数
 	ImGui::DragFloat3("Camera Rotation", &viewProjection_.rotation_.x, 0.01f);
 	ImGui::End();
 }
+
 void FollowCamera::SceneEndResetPosition() {
 	viewProjection_.translation_ = {0.0f, 0.0f, 0.0f};
 	viewProjection_.rotation_ = {0.0f, 0.0f, 0.0f};

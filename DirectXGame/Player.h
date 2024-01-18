@@ -36,13 +36,13 @@ public:
 
 public: // オーバーライド
 	void OnCollision(Base* other) override;
-
+	
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
-	
+
 	// モデル
 	Model* model_ = nullptr;
 
@@ -50,16 +50,18 @@ private:
 
 	Vector3 move_{0, 0, 0};
 	Vector3 keyMove_{0, 0, 0};
-	
+	WorldTransform worldTransform_;
+
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
 
 	float radius_ = 2;
 	float rotationSpeed_ = 0.0f;
 	int  direction_ = 0;
-	
+
 	float radian = 0;
 	Vector3 position_ = {0.0f, 0.0f, -30.0f};
+	
 
 	float rot;
 	float acceleration = 0.0f;
