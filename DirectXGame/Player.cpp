@@ -124,9 +124,7 @@ void Player::OnCollision(Base* other) {
 	keyMove_.z -= sinf(radian + 3.14f / 2) * 1.0f;
 	*/
 	// 反射角
-	
-		rot = -(radian + 3.14f / 4);
-
+	rot = -(radian + 3.14f / 4);
 	acceleration = 1.0f;
 	rotationSpeed_ = 0.1f;
 	// keyMove_.x = -cosf(radian + 3.14f / 4) * 1.0f;
