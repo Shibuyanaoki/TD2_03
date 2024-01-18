@@ -49,11 +49,11 @@ void GameScene::Initialize() {
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize(modelSkydome_.get());
 
-	float degree = degree * (M_PI)
+	//float degree = degree * (M_PI)
 
-	viewProjection_.translation_ = {0.0f,120.0f,0.0f};
+	viewProjection_.translation_ = {0.0f,130.0f,-8.7f};
 
-	viewProjection_.rotation_ = {90.0f, 0.0f, 0.0f};
+	viewProjection_.rotation_ = { 89.5f,0.0f, 0.0f};
 
 }
 
