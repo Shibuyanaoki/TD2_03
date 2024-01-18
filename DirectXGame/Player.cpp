@@ -25,22 +25,22 @@ void Player::Update() {
 	XINPUT_STATE joyState;
 
 	// ゲームパッド状態取得、ゲームパッドが有効の場合if文が通る
-	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+	//if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 
-		//// 速さ
+		// 速さ
 		const float speed = 0.3f;
 
-		//if (input_->PushKey(DIK_W)) {
-		//	keyMove_.z += speed;
-		//} else if (input_->PushKey(DIK_S)) {
-		//	keyMove_.z -= speed;
-		//}
-		//// 押した方向で移動ベクトルを変更（左右）
-		//if (input_->PushKey(DIK_A)) {
-		//	keyMove_.x -= speed;
-		//} else if (input_->PushKey(DIK_D)) {
-		//	keyMove_.x += speed;
-		//}
+		if (input_->PushKey(DIK_W)) {
+			keyMove_.z += speed;
+		} else if (input_->PushKey(DIK_S)) {
+			keyMove_.z -= speed;
+		}
+		// 押した方向で移動ベクトルを変更（左右）
+		if (input_->PushKey(DIK_A)) {
+			keyMove_.x -= speed;
+		} else if (input_->PushKey(DIK_D)) {
+			keyMove_.x += speed;
+		}
 
 		// ゲームパッド状態取得、ゲームパッドが有効の場合if文が通る
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
@@ -52,7 +52,7 @@ void Player::Update() {
 			};
 		}
 		// Matrix4x4 rotationXMatrix = MakeRotateXmatrix(viewProjection_->rotation_.x);
-		Matrix4x4 rotationYMatrix = MakeRotateYmatrix(viewProjection_->rotation_.y);
+		//Matrix4x4 rotationYMatrix = MakeRotateYmatrix(viewProjection_->rotation_.y);
 		// Matrix4x4 rotationZMatrix = MakeRotateZmatrix(viewProjection_->rotation_.z);
 		// Matrix4x4 rotationXYZMatrix =Multiply(rotationXMatrix, Multiply(rotationYMatrix,
 		// rotationZMatrix));
@@ -65,21 +65,21 @@ void Player::Update() {
 		move_ = Transform(keyMove_, rotation);
 
 		// move_ = Transform(move_, rotationYMatrix);
-		move_ = Transform(joyMove, rotation);
+		// move_ = Transform(joyMove, rotation);
 
 		// 移動量に速さを反映
 		move_ = Multiply(speed + acceleration, Normalize(keyMove_));
 
 		// 移動量に速さを反映
-		move_ = Multiply(speed + acceleration, Normalize(joyMove));
+		// move_ = Multiply(speed + acceleration, Normalize(joyMove));
 
 		// 移動
 		worldTransform_.translation_ = Add(worldTransform_.translation_, move_);
 		if (acceleration > 0.0f) {
 			acceleration -= 0.05f;
 			rot -= 0.10f;
-			joyMove.x = -cosf(rot);
-			joyMove.z = -sinf(rot);
+			keyMove_.x = -cosf(rot);
+			keyMove_.z = -sinf(rot);
 		}
 
 		ImGui::Begin("Player");
@@ -96,7 +96,7 @@ void Player::Update() {
 		ImGui::End();
 
 		if (move_.y != 0 || move_.z != 0) {
-			// worldTransform_.rotation_.y = std::atan2(move.x, move.z);
+			worldTransform_.rotation_.y = std::atan2(move_.x, move_.z);
 		}
 		worldTransform_.rotation_.y += 0.02f;
 
@@ -106,14 +106,12 @@ void Player::Update() {
 		worldTransform_.translation_ = Add(worldTransform_.translation_, move_);
 		// 行列を定数バッファに転送
 		worldTransform_.UpdateMatrix();
-	}
+	//}
 }
 
 void Player::Draw(ViewProjection& viewProjection, bool out) {
-
-	if (out == false) {
-		model_->Draw(worldTransform_, viewProjection);
-	}
+	out;
+	model_->Draw(worldTransform_, viewProjection);
 }
 
 const WorldTransform& Player::GetWorldTransform() {
@@ -124,18 +122,18 @@ const WorldTransform& Player::GetWorldTransform() {
 
 void Player::OnCollision(Base* other) {
 
-	 other->GetWorldPosition().x;
-	 GetWorldPosition();
-	 radian = getRadian(
-	     GetWorldPosition().x, GetWorldPosition().z, other->GetWorldPosition().x,
-	     other->GetWorldPosition().z);
+	other->GetWorldPosition().x;
+	GetWorldPosition();
+	radian = getRadian(
+	    GetWorldPosition().x, GetWorldPosition().z, other->GetWorldPosition().x,
+	    other->GetWorldPosition().z);
 	/*keyMove_.x -= cosf(radian + 3.14f / 2) * 1.0f;
 	 keyMove_.z -= sinf(radian + 3.14f / 2) * 1.0f;
 	*/
 	// 反射角
-	 rot = -(radian + 3.14f / 4);
-	 acceleration = 1.0f;
-	 
+	rot = -(radian + 3.14f / 4);
+	acceleration = 1.0f;
+
 	/*Vector3 Player::GetWorldPosition() {
 	    Vector3 worldPos;
 
@@ -145,7 +143,6 @@ void Player::OnCollision(Base* other) {
 
 	    return worldPos;
 	}*/
-
 }
 
 void Player::falling() {
@@ -156,13 +153,16 @@ void Player::falling() {
 	}
 }
 
-
-
 void Player::Reverse() {
 
-	if (rightRotate == true) {
-		worldTransform_.rotation_.y += 0.5f;
+	if (rightRotateFlag == true) {
+		
 	}
+
+	if (leftRotateFlag == true) {
+	
+	}
+
 }
 //
 // Vector3 Player::GetWorldPosition() {

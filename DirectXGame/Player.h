@@ -63,8 +63,8 @@ private:
 	
 	float radian = 0;
 	Vector3 position_ = {0.0f, 0.0f, -30.0f};
-	bool rightRotate = true;
-	bool leftRotate = false;
+	bool rightRotateFlag = true;
+	bool leftRotateFlag = false;
 
 	float rot;
 	float acceleration = 0.0f;

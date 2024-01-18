@@ -97,6 +97,8 @@ private: // メンバ変数
 	int timeFlag = false;
 	int time = 0;
 
+	bool rotationFlag = true;
+
 	float radian = 0;
 	/// <summary>
 	/// ゲームシーン用

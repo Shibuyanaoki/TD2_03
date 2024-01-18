@@ -125,6 +125,11 @@ void GameScene::Update() {
 	//	// viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 
 	viewProjection_.UpdateMatrix();
+
+	/*if (rotationFlag == true) {
+	
+	}*/
+
 }
 
 void GameScene::Draw() {
@@ -178,6 +183,7 @@ void GameScene::Draw() {
 }
 
 void GameScene::OnCollisions() {
+
 	float dx = player_->GetWorldPosition().x - enemy_->GetWorldPosition().x;
 	float dz = player_->GetWorldPosition().z - enemy_->GetWorldPosition().z;
 	float dy = player_->GetWorldPosition().y - enemy_->GetWorldPosition().y;
@@ -203,6 +209,9 @@ void GameScene::OnCollisions() {
 		collisionFlag_ = 1;
 		collisionTime_ = 0;
 	}
+
+	
+
 	// Base* base = player_.get();
 	// base->GetWorldPosition();		// playerのGetWorldPosition()
 	// player_->GetWorldPosition();
