@@ -1,8 +1,9 @@
 #include "GameScene.h"
-#include "TextureManager.h"
 #include "ImGuiManager.h"
-#include <math.h>
+#include "TextureManager.h"
+#define _USE_MATH_DEFINES
 #include <cassert>
+#include <math.h>
 
 GameScene::GameScene() {}
 
@@ -17,7 +18,7 @@ void GameScene::Initialize() {
 	// ビューポートプロジェクションの初期化
 	viewProjection_.Initialize();
 
-	//プレイヤーのモデル	
+	// プレイヤーのモデル
 	modelPlayer_.reset(Model::CreateFromOBJ("Player", true));
 	// 敵のモデル
 	modelEnemy_.reset(Model::CreateFromOBJ("Enemy", true));
@@ -26,11 +27,11 @@ void GameScene::Initialize() {
 	// スカイドームのモデル
 	modelSkydome_.reset(Model::CreateFromOBJ("skydome", true));
 
-	//プレイヤーの生成と初期化
+	// プレイヤーの生成と初期化
 	player_ = std::make_unique<Player>();
 	player_->Initialize(modelPlayer_.get());
 
-	//敵の生成と初期化
+	// 敵の生成と初期化
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize(modelEnemy_.get());
 
@@ -41,7 +42,7 @@ void GameScene::Initialize() {
 	// デバッグカメラ
 	// ビュープロジェクション行列の転送debugCamera_ = std::make_unique<DebugCamera>();
 
-	//地面の生成と初期化
+	// 地面の生成と初期化
 	ground_ = std::make_unique<Ground>();
 	ground_->Initialize(modelground_.get());
 
@@ -49,35 +50,34 @@ void GameScene::Initialize() {
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize(modelSkydome_.get());
 
-	float degree = degree * (M_PI)
+	//float degree = degree * (180.0f/float(M_PI));
 
-	viewProjection_.translation_ = {0.0f,120.0f,0.0f};
+	viewProjection_.translation_ = {0.0f, 150.0f, -8.7f};
 
-	viewProjection_.rotation_ = {90.0f, 0.0f, 0.0f};
-
+	viewProjection_.rotation_ = {89.5f, 0.0f, 0.0f};
 }
 
-void GameScene::Update() { 
+void GameScene::Update() {
 
 	// カメラの向きと自機の向きをそろえる
-	//player_->SetViewRotate(followCamera_->GetViewRotate());
+	// player_->SetViewRotate(followCamera_->GetViewRotate());
 
 	player_->Update();
 
-	//followCamera_->Update();
+	// followCamera_->Update();
 
 	ground_->Update();
 
 	skydome_->Update();
 
-	//debugCamera_->Update();
+	// debugCamera_->Update();
 
 	ImGui::Begin("Camera");
 	float Position[3] = {
 	    viewProjection_.translation_.x, viewProjection_.translation_.y,
 	    viewProjection_.translation_.z};
 
-	ImGui::SliderFloat3("Camera Translation", Position, -65.0f, 65.0f);
+	ImGui::SliderFloat3("Camera Translation", Position, -50.0f, 150.0f);
 
 	viewProjection_.translation_.x = Position[0];
 	viewProjection_.translation_.y = Position[1];
@@ -86,12 +86,10 @@ void GameScene::Update() {
 	ImGui::End();
 
 	//// ビュープロジェクションの反映
-	//viewProjection_.matView = followCamera_->GetViewProjection().matView;
-	//viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+	// viewProjection_.matView = followCamera_->GetViewProjection().matView;
+	// viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 
-	
 	viewProjection_.UpdateMatrix();
-
 }
 
 void GameScene::Draw() {
