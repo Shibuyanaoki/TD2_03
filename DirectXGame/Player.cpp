@@ -48,11 +48,7 @@ void Player::Update() {
 			    (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed, // Lスティックの縦成分
 			};
 
-
-			
 		}
-
-
 		// Matrix4x4 rotationXMatrix = MakeRotateXmatrix(viewProjection_->rotation_.x);
 		Matrix4x4 rotationYMatrix = MakeRotateYmatrix(viewProjection_->rotation_.y);
 		// Matrix4x4 rotationZMatrix = MakeRotateZmatrix(viewProjection_->rotation_.z);
@@ -65,55 +61,55 @@ void Player::Update() {
 
 		//move_ = Transform(move_, rotationYMatrix);
 
-		//move_ = Transform(keyMove_, rotation);
-		//
-		//// 移動量に速さを反映
-		//move_ = Multiply(speed + acceleration, Normalize(keyMove_));
-
-		//if (direction_ == 0) {
-		//	if (acceleration > 0.0f) {
-		//		acceleration -= 0.01f;
-		//		rot -= 0.08f;
-		//		keyMove_.x = -cosf(rot);
-		//		keyMove_.z = -sinf(rot);
-		//		rotationSpeed_ -= 0.01f;
-		//	}
-		//}
-		//if (direction_ == 1) {
-		//	if (acceleration > 0.0f) {
-		//		acceleration -= 0.01f;
-		//		rot -= 0.08f;
-		//		keyMove_.x = +cosf(rot);
-		//		keyMove_.z = -sinf(rot);
-		//		rotationSpeed_ -= 0.01f;
-		//	}
-		//}
-
-		move_ = Transform(joyMove_, rotation);
-
-	    // 移動量に速さを反映
-	    move_ = Multiply(speed + acceleration, Normalize(joyMove_));
-
-	    if (direction_ == 0) {
-		    if (acceleration > 0.0f) {
-			    acceleration -= 0.01f;
-			    rot -= 0.08f;
-			    joyMove_.x = -cosf(rot);
-			    joyMove_.z = -sinf(rot);
-			    rotationSpeed_ -= 0.01f;
-		    }
-	    }
-	    if (direction_ == 1) {
-		    if (acceleration > 0.0f) {
-			    acceleration -= 0.01f;
-			    rot -= 0.08f;
-			    joyMove_.x = +cosf(rot);
-			    joyMove_.z = -sinf(rot);
-			    rotationSpeed_ -= 0.01f;
-		    }
-	    }
-
+		move_ = Transform(keyMove_, rotation);
 		
+		// 移動量に速さを反映
+		move_ = Multiply(speed + acceleration, Normalize(keyMove_));
+
+		if (direction_ == 0) {
+			if (acceleration > 0.0f) {
+				acceleration -= 0.01f;
+				rot -= 0.08f;
+				keyMove_.x = -cosf(rot);
+				keyMove_.z = -sinf(rot);
+				rotationSpeed_ -= 0.01f;
+			}
+		}
+		if (direction_ == 1) {
+			if (acceleration > 0.0f) {
+				acceleration -= 0.01f;
+				rot -= 0.08f;
+				keyMove_.x = +cosf(rot);
+				keyMove_.z = -sinf(rot);
+				rotationSpeed_ -= 0.01f;
+			}
+		}
+
+		//move_ = Transform(joyMove_, rotation);
+
+	 //   // 移動量に速さを反映
+	 //   move_ = Multiply(speed + acceleration, Normalize(joyMove_));
+
+	 //   if (direction_ == 0) {
+		//    if (acceleration > 0.0f) {
+		//	    acceleration -= 0.01f;
+		//	    rot -= 0.08f;
+		//	    joyMove_.x = -cosf(rot);
+		//	    joyMove_.z = -sinf(rot);
+		//	    rotationSpeed_ -= 0.01f;
+		//    }
+	 //   }
+	 //   if (direction_ == 1) {
+		//    if (acceleration > 0.0f) {
+		//	    acceleration -= 0.01f;
+		//	    rot -= 0.08f;
+		//	    joyMove_.x = +cosf(rot);
+		//	    joyMove_.z = -sinf(rot);
+		//	    rotationSpeed_ -= 0.01f;
+		//    }
+	 //   }
+
+		//
 
 		if (move_.y != 0 || move_.z != 0) {
 			// worldTransform_.rotation_.y = std::atan2(move.x, move.z);
