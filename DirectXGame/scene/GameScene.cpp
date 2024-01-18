@@ -23,7 +23,7 @@ void GameScene::Initialize() {
 	// 敵のモデル
 	modelEnemy_.reset(Model::CreateFromOBJ("Enemy", true));
 	// 地面のモデル
-	modelground_.reset(Model::CreateFromOBJ("ground", true));
+	modelGround_.reset(Model::CreateFromOBJ("ground", true));
 	// スカイドームのモデル
 	modelSkydome_.reset(Model::CreateFromOBJ("skydome", true));
 
@@ -36,52 +36,14 @@ void GameScene::Initialize() {
 	enemy_->Initialize(modelEnemy_.get());
 
 	// 追従カメラの生成と初期化処理
-	/*followCamera_ = std::make_unique<FollowCamera>();
-	followCamera_->Initialize();*/
-
-	// デバッグカメラ
-	// ビュープロジェクション行列の転送debugCamera_ = std::make_unique<DebugCamera>();
-
-	// 地面の生成と初期化
-	ground_ = std::make_unique<Ground>();
-	ground_->Initialize(modelground_.get());
-
-	// スカイドームの生成と初期化
-	skydome_ = std::make_unique<Skydome>();
-	skydome_->Initialize(modelSkydome_.get());
-
-	//float degree = degree * (180.0f/float(M_PI));
-
-	viewProjection_.translation_ = {0.0f, 150.0f, -8.7f};
-
-	viewProjection_.rotation_ = {89.5f, 0.0f, 0.0f};
-}
-
-	// ビューポートプロジェクションの初期化
-	viewProjection_.Initialize();
-
-	//プレイヤーのモデル	
-	modelPlayer_.reset(Model::CreateFromOBJ("Player", true));
-	// 敵のモデル
-	modelEnemy_.reset(Model::CreateFromOBJ("Enemy", true));
-	// 地面のモデル
-	modelGround_.reset(Model::CreateFromOBJ("ground", true));
-	// スカイドームのモデル
-	modelSkydome_.reset(Model::CreateFromOBJ("skydome", true));
-
-	//プレイヤーの生成と初期化
-	player_ = std::make_unique<Player>();
-	player_->Initialize(modelPlayer_.get());
-
-	//敵の生成と初期化
-	enemy_ = std::make_unique<Enemy>();
-	enemy_->Initialize(modelEnemy_.get());
-
-	// 追従カメラの生成と初期化処理
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
 
-	//地面の生成と初期化
+	// デバッグカメラ
+	// ビュープロジェクション行列の転送
+	// debugCamera_ = std::make_unique<DebugCamera>();
+
+	// 地面の生成と初期化
 	ground_ = std::make_unique<Ground>();
 	ground_->Initialize(modelGround_.get());
 
@@ -89,22 +51,17 @@ void GameScene::Initialize() {
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize(modelSkydome_.get());
 
-	// 自キャラのワールドトランスフォームを追従カメラのセット
-	followCamera_->SetTarget(&player_->GetWorldTransform());
-	// 自キャラのビュープロジェクションに追従カメラのビュープロジェクションをセット
-	player_->SetViewProjection(&followCamera_->GetViewProjection());
+	// float degree = degree * (180.0f/float(M_PI));
 
-	debugCamera_ = std::make_unique<DebugCamera>(1280, 720);
-	// 軸方向表示の表示を有効にする
-	AxisIndicator::GetInstance()->SetVisible(true);
-	// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
-	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
+	viewProjection_.translation_ = {0.0f, 150.0f, -8.7f};
+
+	viewProjection_.rotation_ = {89.5f, 0.0f, 0.0f};
 }
 
-void GameScene::Update() { 
+void GameScene::Update() {
 
 	// カメラの向きと自機の向きをそろえる
-	//player_->SetViewRotate(followCamera_->GetViewRotate());
+	// player_->SetViewRotate(followCamera_->GetViewRotate());
 
 	player_->Update();
 
@@ -118,64 +75,54 @@ void GameScene::Update() {
 
 	OnCollisions();
 
-	if (input_->TriggerKey(DIK_LSHIFT) && isDebugCameraActive_ == false) {
+	/*if (input_->TriggerKey(DIK_LSHIFT) && isDebugCameraActive_ == false) {
 		isDebugCameraActive_ = true;
 	} else if (input_->TriggerKey(DIK_LSHIFT) && isDebugCameraActive_ == true) {
 		isDebugCameraActive_ = false;
-	}
+	}*/
 
 	// カメラ処理
-	if (isDebugCameraActive_ == true) {
-		debugCamera_->Update();
-		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
-		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
-		// ビュープロジェクション行列の転送
-		viewProjection_.TransferMatrix();
-	} else {
-		followCamera_->Update();
+	//if (isDebugCameraActive_ == true) {
+	//	debugCamera_->Update();
+	//	viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+	//	viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+	//	// ビュープロジェクション行列の転送
+	//	viewProjection_.TransferMatrix();
+	//} else {
+	//	followCamera_->Update();
 
-		viewProjection_.matView = followCamera_->GetViewProjection().matView;
-		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+	//	viewProjection_.matView = followCamera_->GetViewProjection().matView;
+	//	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 
-		
-		viewProjection_.TransferMatrix();
-	}
-	ImGui::Begin("Collision");
+	//	viewProjection_.TransferMatrix();
+	//}
+
+	/*ImGui::Begin("Collision");
 	ImGui::InputInt("CollisionTime", &collisionTime_);
 	ImGui::InputInt("CollisionFlag", &collisionFlag_);
-	ImGui::End();
+	ImGui::End();*/
 
-void GameScene::Update() {
+	//	// カメラの向きと自機の向きをそろえる
+	//	// player_->SetViewRotate(followCamera_->GetViewRotate());
 
-	// カメラの向きと自機の向きをそろえる
-	// player_->SetViewRotate(followCamera_->GetViewRotate());
+	//	// debugCamera_->Update();
 
-	player_->Update();
+	//	ImGui::Begin("Camera");
+	//	float Position[3] = {
+	//	    viewProjection_.translation_.x, viewProjection_.translation_.y,
+	//	    viewProjection_.translation_.z};
 
-	// followCamera_->Update();
+	//	ImGui::SliderFloat3("Camera Translation", Position, -50.0f, 150.0f);
 
-	ground_->Update();
+	//	viewProjection_.translation_.x = Position[0];
+	//	viewProjection_.translation_.y = Position[1];
+	//	viewProjection_.translation_.z = Position[2];
 
-	skydome_->Update();
+	//	ImGui::End();
 
-	// debugCamera_->Update();
-
-	ImGui::Begin("Camera");
-	float Position[3] = {
-	    viewProjection_.translation_.x, viewProjection_.translation_.y,
-	    viewProjection_.translation_.z};
-
-	ImGui::SliderFloat3("Camera Translation", Position, -50.0f, 150.0f);
-
-	viewProjection_.translation_.x = Position[0];
-	viewProjection_.translation_.y = Position[1];
-	viewProjection_.translation_.z = Position[2];
-
-	ImGui::End();
-
-	//// ビュープロジェクションの反映
-	// viewProjection_.matView = followCamera_->GetViewProjection().matView;
-	// viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+	//	//// ビュープロジェクションの反映
+	//	// viewProjection_.matView = followCamera_->GetViewProjection().matView;
+	//	// viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 
 	viewProjection_.UpdateMatrix();
 }
@@ -207,7 +154,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	player_->Draw(viewProjection_);
+	player_->Draw(viewProjection_,true);
 	enemy_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
 	skydome_->Draw(viewProjection_);
@@ -238,7 +185,7 @@ void GameScene::OnCollisions() {
 	dist = sqrtf(dist);
 	// 4 = 二つの円の半径足したもの
 	if (dist <= 4) {
-		//outFlag = true;
+		// outFlag = true;
 		hitFlag = true;
 		timeFlag = true;
 		if (collisionFlag_ == 1) {
@@ -247,7 +194,6 @@ void GameScene::OnCollisions() {
 		}
 	} else {
 		outFlag = false;
-		
 	}
 
 	if (collisionFlag_ == 0) {
@@ -257,26 +203,23 @@ void GameScene::OnCollisions() {
 		collisionFlag_ = 1;
 		collisionTime_ = 0;
 	}
-	//Base* base = player_.get();
-	//base->GetWorldPosition();		// playerのGetWorldPosition()
-	//player_->GetWorldPosition();
+	// Base* base = player_.get();
+	// base->GetWorldPosition();		// playerのGetWorldPosition()
+	// player_->GetWorldPosition();
 
-	//base->OnCollision(enemy_.get());
+	// base->OnCollision(enemy_.get());
 
-	
-
-	 if (timeFlag) {
+	if (timeFlag) {
 		time++;
-		if(time >= 60) {
+		if (time >= 60) {
 			resetFlag();
 		}
-	 }
-
+	}
 }
 
 void GameScene::resetFlag() {
-	 timeFlag = false;
-	 hitFlag = false;
-	 outFlag = false;
-	 time = 0;
+	timeFlag = false;
+	hitFlag = false;
+	outFlag = false;
+	time = 0;
 }

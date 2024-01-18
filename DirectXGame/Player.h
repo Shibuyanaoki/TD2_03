@@ -35,6 +35,7 @@ public:
 	float GetRadius() { return radius_; }
 
 	void falling();
+
 public: // オーバーライド
 	void OnCollision(Base* other) override;
 
@@ -51,6 +52,7 @@ private:
 	// WorldTransform worldTransform_;
 
 	Vector3 move_{0, 0, 0};
+	Vector3 joyMove{0, 0, 0}; 
 	Vector3 keyMove_{0, 0, 0};
 	
 	// カメラのビュープロジェクション

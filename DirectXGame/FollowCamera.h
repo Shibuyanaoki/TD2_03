@@ -58,7 +58,7 @@ class FollowCamera {
 	const WorldTransform* target_ = nullptr;
 
 	// ゲームパッドの状態を得る変数
-	XINPUT_STATE joyState;
+	//XINPUT_STATE joyState;
 
 	// 追従対象からカメラまでのオフセット
 	Vector3 offset = {0.0f, 0.0f, 30.0f};
