@@ -72,8 +72,6 @@ void Player::Update() {
 
 	falling();
 
-	
-
 	// 行列を定数バッファに転送
 	worldTransform_.UpdateMatrix();
 }
