@@ -1,9 +1,10 @@
 #include "GameScene.h"
-#include "TextureManager.h"
 #include "ImGuiManager.h"
-#include <math.h>
-#include <cassert>
+#include "TextureManager.h"
 #include <AxisIndicator.h>
+#include <cassert>
+#include <math.h>
+#include <fstream>
 
 GameScene::GameScene() {}
 
@@ -18,7 +19,7 @@ void GameScene::Initialize() {
 	// ビューポートプロジェクションの初期化
 	viewProjection_.Initialize();
 
-	//プレイヤーのモデル	
+	// プレイヤーのモデル
 	modelPlayer_.reset(Model::CreateFromOBJ("Player", true));
 	// 敵のモデル
 	modelEnemy_.reset(Model::CreateFromOBJ("Enemy", true));
@@ -26,20 +27,26 @@ void GameScene::Initialize() {
 	modelGround_.reset(Model::CreateFromOBJ("ground", true));
 	// スカイドームのモデル
 	modelSkydome_.reset(Model::CreateFromOBJ("skydome", true));
+	// アイテムのモデル
+	modelItem_.reset(Model::CreateFromOBJ("", true));
 
-	//プレイヤーの生成と初期化
+	// プレイヤーの生成と初期化
 	player_ = std::make_unique<Player>();
 	player_->Initialize(modelPlayer_.get());
 
-	//敵の生成と初期化
-	enemy_ = std::make_unique<Enemy>();
-	enemy_->Initialize(modelEnemy_.get());
+	// 敵の生成と初期化
+	//enemy_ = std::make_unique<Enemy>();
+	//enemy_->Initialize(modelEnemy_.get());
+
+	// アイテムの生成と初期化
+	item_ = std::make_unique<Item>();
+	item_->Initialize(modelItem_.get());
 
 	// 追従カメラの生成と初期化処理
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
 
-	//地面の生成と初期化
+	// 地面の生成と初期化
 	ground_ = std::make_unique<Ground>();
 	ground_->Initialize(modelGround_.get());
 
@@ -57,12 +64,16 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
+
+	viewProjection_.translation_ = {0.0f, 150.0f, -8.7f};
+
+	viewProjection_.rotation_ = {89.5f, 0.0f, 0.0f};
 }
 
-void GameScene::Update() { 
+void GameScene::Update() {
 
 	// カメラの向きと自機の向きをそろえる
-	//player_->SetViewRotate(followCamera_->GetViewRotate());
+	// player_->SetViewRotate(followCamera_->GetViewRotate());
 
 	player_->Update();
 
@@ -95,7 +106,6 @@ void GameScene::Update() {
 		viewProjection_.matView = followCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 
-		
 		viewProjection_.TransferMatrix();
 	}
 	ImGui::Begin("Collision");
@@ -109,9 +119,7 @@ void GameScene::Update() {
 	    viewProjection_.translation_.z};
 
 	float positionRotation[3] = {
-	    viewProjection_.rotation_.x, viewProjection_.rotation_.y,
-		viewProjection_.rotation_.z};
-
+	    viewProjection_.rotation_.x, viewProjection_.rotation_.y, viewProjection_.rotation_.z};
 
 	ImGui::SliderFloat3("Camera Translation", positionTranslation, -65.0f, 65.0f);
 	ImGui::SliderFloat3("Camera Rotation", positionRotation, -5.0f, 5.0f);
@@ -127,12 +135,26 @@ void GameScene::Update() {
 	ImGui::End();
 
 	//// ビュープロジェクションの反映
-	//viewProjection_.matView = followCamera_->GetViewProjection().matView;
-	//viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+	// viewProjection_.matView = followCamera_->GetViewProjection().matView;
+	// viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 
-	
+	// デスフラグの立ったアイテムを削除
+	enemys_.remove_if([](std::unique_ptr<Enemy>& enemy) {
+		if (enemy->IsDead()) {
+			enemy.release();
+			return true;
+		}
+		return false;
+	});
+
+	/*if (SceneEndTitle <= 0) {
+		isSceneEnd = true;
+	}*/
+
+	// CSVファイルの更新処理
+	UpdataPointPopCommands();
+
 	viewProjection_.UpdateMatrix();
-
 }
 
 void GameScene::Draw() {
@@ -162,10 +184,15 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	player_->Draw(viewProjection_,outFlag);
-	enemy_->Draw(viewProjection_);
+	player_->Draw(viewProjection_, outFlag);
+
+	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
+		enemy->Draw(viewProjection_);
+	}
+
 	skydome_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
+	item_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -185,15 +212,71 @@ void GameScene::Draw() {
 #pragma endregion
 }
 
+void GameScene::LoadPointPopData() {
+	pointPopCommnds.clear();
+	std::ifstream file;
+	file.open("Resources/ItemPop.csv");
+	assert(file.is_open());
+
+	// ファイルの内容を文字列ストリームにコピー
+	pointPopCommnds << file.rdbuf();
+
+	// ファイルを閉じる
+	file.close();
+}
+
+void GameScene::UpdataPointPopCommands() { // 1行分の文字列を入れる変数
+	std::string line;
+
+	// コマンド実行ループ
+	while (getline(pointPopCommnds, line)) {
+		std::istringstream line_stream(line);
+
+		std::string word;
+		// 　,区切りで行の先頭文字列を所得
+
+		getline(line_stream, word, ',');
+
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			// コメント行を飛ばす
+			continue;
+		}
+
+		// POPコマンド
+		if (word.find("POP") == 0) {
+			// x座標
+			getline(line_stream, word, ',');
+			float x = (float)std::atof(word.c_str());
+
+			// y座標
+			getline(line_stream, word, ',');
+			float y = (float)std::atof(word.c_str());
+
+			// z座標
+			getline(line_stream, word, ',');
+			float z = (float)std::atof(word.c_str());
+
+			PointGenerate({x, y, z});
+		}
+	}
+}
+
+void GameScene::PointGenerate(Vector3 position) {
+	// アイテムの生成と初期化処理
+	Enemy* enemy = new Enemy();
+	enemy->Initialize(modelEnemy_.get(), position);
+
+	enemys_.push_back(static_cast<std::unique_ptr<Enemy>>(enemy));
+}
+
 void GameScene::OnCollisions() {
-	float dx = player_->GetWorldPosition().x - enemy_->GetWorldPosition().x;
-	float dz = player_->GetWorldPosition().z - enemy_->GetWorldPosition().z;
-	float dy = player_->GetWorldPosition().y - enemy_->GetWorldPosition().y;
-	float dist = dx * dx + dy * dy + dz * dz;
-	dist = sqrtf(dist);
+
+	float dist = CollisionDetection(player_->GetWorldPosition(), enemy_->GetWorldPosition());
+
 	// 4 = 二つの円の半径足したもの
 	if (dist <= 4) {
-		//outFlag = true;
+		// outFlag = true;
 		hitFlag = true;
 		timeFlag = true;
 		if (collisionFlag_ == 1) {
@@ -202,7 +285,6 @@ void GameScene::OnCollisions() {
 		}
 	} else {
 		outFlag = false;
-		
 	}
 
 	if (collisionFlag_ == 0) {
@@ -212,26 +294,29 @@ void GameScene::OnCollisions() {
 		collisionFlag_ = 1;
 		collisionTime_ = 0;
 	}
-	//Base* base = player_.get();
-	//base->GetWorldPosition();		// playerのGetWorldPosition()
-	//player_->GetWorldPosition();
-
-	//base->OnCollision(enemy_.get());
-
 	
+	float itemPlayDist = CollisionDetection(player_->GetWorldPosition(), item_->GetWorldPosition());
 
-	 if (timeFlag) {
+	if (itemPlayDist <= 4) {
+		if (player_->GetDirection() == false) {
+			player_->SetSirection(true);
+		} else if (player_->GetDirection() == true) {
+			player_->SetSirection(false);
+		}
+	}
+
+	if (timeFlag) {
 		time++;
-		if(time >= 60) {
+		if (time >= 60) {
 			resetFlag();
 		}
-	 }
-
+	}
+		
 }
 
 void GameScene::resetFlag() {
-	 timeFlag = false;
-	 hitFlag = false;
-	 outFlag = false;
-	 time = 0;
+	timeFlag = false;
+	hitFlag = false;
+	outFlag = false;
+	time = 0;
 }

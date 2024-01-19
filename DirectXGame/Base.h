@@ -10,6 +10,7 @@ protected:
 	WorldTransform worldTransform_;
 
 public:
+
 	Vector3 GetWorldPosition() {
 		Vector3 worldPos;
 
@@ -19,8 +20,5 @@ public:
 
 		return worldPos;
 	}
-
-
-
 
 };

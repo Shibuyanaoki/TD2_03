@@ -9,7 +9,7 @@
 #include "Base.h"
 class Enemy :public Base {
 public:
-	void Initialize(Model* model);
+	void Initialize(Model* model,Vector3 position);
 
 	void Update();
 
@@ -31,8 +31,12 @@ public:
 	// getter
 	float GetRadius() { return radius_; }
 
+	bool IsDead() const { return isDead_; }
+
 	public: // オーバーライド
 	void OnCollision(Base* other) override;
+
+
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;
@@ -42,7 +46,11 @@ private:
 	// モデル
 	Model* model_ = nullptr;
 
-	//WorldTransform worldTransform_;
+	// デスフラグ
+	bool isDead_ = false;
+
+	// ポジション
+	Vector3 position_;
 
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;

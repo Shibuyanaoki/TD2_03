@@ -1,11 +1,14 @@
 ﻿#include "Enemy.h"
 #include <cassert>
 
-void Enemy::Initialize(Model* model) {
+void Enemy::Initialize(Model* model,Vector3 position) {
 	worldTransform_.Initialize();
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	// worldTransform_.rotation_.x = 10.0f;
+	
+	position_ = position;
+
 	//  NULLポインタチェック
 	assert(model);
 	// 引数からデータを受け取る

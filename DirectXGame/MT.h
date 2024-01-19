@@ -125,3 +125,6 @@ Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 
 //反射ベクトル
 float getRadian(float X1, float Z1, float X2, float Z2);
+
+// 当たり判定
+float CollisionDetection(const Vector3& v1, const Vector3& v2);

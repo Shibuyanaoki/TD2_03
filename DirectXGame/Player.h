@@ -21,6 +21,7 @@ public:
 	void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
 	}
+
 	//void SetMove(Vector3 setMove) { setMove = move; }
 	// ワールドトランスフォーム取得
 	const WorldTransform& GetWorldTransform();
@@ -31,8 +32,14 @@ public:
 	// カメラの向きと自機の向きを合わせる
 	void SetViewRotate(const Vector3 parent) { worldTransform_.rotation_ = parent; }
 
+	void falling();
+
 	// getter
 	float GetRadius() { return radius_; }
+
+	bool GetDirection() { return direction_; }
+
+	bool SetSirection(bool direction) { return direction_ = direction; }
 
 public: // オーバーライド
 	void OnCollision(Base* other) override;
@@ -59,7 +66,7 @@ private:
 
 	float radius_ = 2;
 	float rotationSpeed_ = 0.0f;
-	int  direction_ = 0;
+	bool  direction_ = 0;
 
 	float radian = 0;
 	Vector3 position_ = {0.0f, 0.0f, -30.0f};
