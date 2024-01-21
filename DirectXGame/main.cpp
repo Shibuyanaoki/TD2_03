@@ -1,10 +1,13 @@
 #include "Audio.h"
 #include "AxisIndicator.h"
+#include "ClearScene.h"
 #include "DirectXCommon.h"
 #include "GameScene.h"
 #include "ImGuiManager.h"
 #include "PrimitiveDrawer.h"
+#include "Scene.h"
 #include "TextureManager.h"
+#include "TitleScene.h"
 #include "WinApp.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
@@ -17,6 +20,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	AxisIndicator* axisIndicator = nullptr;
 	PrimitiveDrawer* primitiveDrawer = nullptr;
 	GameScene* gameScene = nullptr;
+	TitleScene* titleScene = nullptr;
+	ClearScene* clearScene = nullptr;
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
@@ -61,6 +66,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	gameScene = new GameScene();
 	gameScene->Initialize();
 
+	// タイトルシーンの初期化
+	titleScene = new TitleScene();
+	titleScene->Initialize();
+
+	// クリアシーンの初期化
+	clearScene = new ClearScene;
+	clearScene->Initialize();
+
+	Scene scene = Scene::GAME;
+
 	// メインループ
 	while (true) {
 		// メッセージ処理
@@ -72,8 +87,48 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		imguiManager->Begin();
 		// 入力関連の毎フレーム処理
 		input->Update();
-		// ゲームシーンの毎フレーム処理
-		gameScene->Update();
+
+		switch (scene) {
+		case Scene::TITLE:
+
+			if (titleScene->IsSceneEnd() == true) {
+				// 次のシーンを値を代入してシーン切り替え
+				scene = titleScene->NextScene();
+				titleScene->Reset();
+			}
+
+			// タイトルシーンの毎フレーム処理
+			titleScene->Update();
+
+			break;
+
+		case Scene::GAME:
+			// ゲームシーンの毎フレーム処理
+			gameScene->Update();
+
+			if (gameScene->IsSceneEnd() == true) {
+				// 次のシーンを値を代入してシーン切り替え
+				scene = gameScene->NextScene();
+				/*gameScene->StopBGM();
+				gameScene->Reset();*/
+			}
+
+			break;
+
+		case Scene::GAMECLEAR:
+
+			if (clearScene->IsSceneEnd() == true) {
+				// 次のシーンを値を代入してシーン切り替え
+				scene = clearScene->NextScene();
+				clearScene->Reset();
+			}
+
+			// リザルトシーンの毎フレーム処理
+			clearScene->Update();
+
+			break;
+		}
+
 		// 軸表示の更新
 		axisIndicator->Update();
 		// ImGui受付終了
@@ -81,8 +136,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// 描画開始
 		dxCommon->PreDraw();
-		// ゲームシーンの描画
-		gameScene->Draw();
+
+		switch (scene) {
+		case Scene::TITLE:
+			// タイトルシーンの描画
+			titleScene->Draw();
+
+			break;
+
+		case Scene::GAME:
+			// ゲームシーンの描画
+			gameScene->Draw();
+
+			break;
+		case Scene::GAMECLEAR:
+			// リザルトシーンの描画
+			clearScene->Draw();
+
+			break;
+		}
+
 		// 軸表示の描画
 		axisIndicator->Draw();
 		// プリミティブ描画のリセット

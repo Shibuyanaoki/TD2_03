@@ -6,6 +6,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Scene.h"
 
 class ClearScene {
 
@@ -16,6 +17,12 @@ public:
 
 	void Draw();
 
+	bool IsSceneEnd() { return isSceneEnd; }
+
+	Scene NextScene() { return Scene::EX; }
+
+	void Reset();
+
 private:
 
 	DirectXCommon* dxCommon_ = nullptr;
@@ -23,5 +30,8 @@ private:
 	Audio* audio_ = nullptr;
 
 	WorldTransform worldTransform_;
+
+	// シーンを終わらせるフラグ
+	bool isSceneEnd = false;
 
 };

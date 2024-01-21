@@ -21,6 +21,7 @@
 #include "Ground.h"
 #include "Item.h"
 #include "ImGuiManager.h"
+#include "Scene.h"
 
 /// <summary>
 /// ゲームシーン
@@ -72,6 +73,10 @@ public: // メンバ関数
 	void OnCollisions();
 
 	void resetFlag();
+
+	bool IsSceneEnd() { return isSceneEnd; }
+
+	Scene NextScene() { return Scene::GAMECLEAR; }
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -126,6 +131,10 @@ private: // メンバ変数
 	int time = 0;
 
 	float radian = 0;
+
+	// シーンを終わらせるフラグ
+	bool isSceneEnd = false;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

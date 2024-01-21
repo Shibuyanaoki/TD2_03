@@ -3,8 +3,8 @@
 #include "TextureManager.h"
 #include <AxisIndicator.h>
 #include <cassert>
-#include <math.h>
 #include <fstream>
+#include <math.h>
 
 GameScene::GameScene() {}
 
@@ -28,15 +28,15 @@ void GameScene::Initialize() {
 	// スカイドームのモデル
 	modelSkydome_.reset(Model::CreateFromOBJ("skydome", true));
 	// アイテムのモデル
-	modelItem_.reset(Model::CreateFromOBJ("", true));
+	modelItem_.reset(Model::CreateFromOBJ("Bard", true));
 
 	// プレイヤーの生成と初期化
 	player_ = std::make_unique<Player>();
 	player_->Initialize(modelPlayer_.get());
 
 	// 敵の生成と初期化
-	//enemy_ = std::make_unique<Enemy>();
-	//enemy_->Initialize(modelEnemy_.get());
+	// enemy_ = std::make_unique<Enemy>();
+	// enemy_->Initialize(modelEnemy_.get());
 
 	// アイテムの生成と初期化
 	item_ = std::make_unique<Item>();
@@ -68,6 +68,10 @@ void GameScene::Initialize() {
 	viewProjection_.translation_ = {0.0f, 150.0f, -8.7f};
 
 	viewProjection_.rotation_ = {89.5f, 0.0f, 0.0f};
+
+	// CSVファイル読み込み
+	LoadPointPopData();
+
 }
 
 void GameScene::Update() {
@@ -148,7 +152,7 @@ void GameScene::Update() {
 	});
 
 	/*if (SceneEndTitle <= 0) {
-		isSceneEnd = true;
+	    isSceneEnd = true;
 	}*/
 
 	// CSVファイルの更新処理
@@ -294,7 +298,7 @@ void GameScene::OnCollisions() {
 		collisionFlag_ = 1;
 		collisionTime_ = 0;
 	}
-	
+
 	float itemPlayDist = CollisionDetection(player_->GetWorldPosition(), item_->GetWorldPosition());
 
 	if (itemPlayDist <= 4) {
@@ -305,13 +309,23 @@ void GameScene::OnCollisions() {
 		}
 	}
 
+	/*float itemEnemyDist =
+	    CollisionDetection(item_->GetWorldPosition(), enemy_->GetWorldPosition());
+
+	if (itemEnemyDist<=4) {
+		if (enemy_->GetDirection() == false) {
+			enemy_->SetSirection(true);
+		} else if (enemy_->GetDirection() == true) {
+			enemy_->SetSirection(false);
+		}
+	}*/
+
 	if (timeFlag) {
 		time++;
 		if (time >= 60) {
 			resetFlag();
 		}
 	}
-		
 }
 
 void GameScene::resetFlag() {
