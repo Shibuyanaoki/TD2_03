@@ -111,8 +111,6 @@ private: // メンバ変数
 	std::unique_ptr<Item> item_;
 	// 　ポイントアイテム発生コマンド
 	std::stringstream pointPopCommnds;
-	//敵
-	std::unique_ptr<Enemy> enemy_;
 	// 敵
 	std::list<std::unique_ptr<Enemy>> enemys_;
 	// 敵発生コマンド

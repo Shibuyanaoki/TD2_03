@@ -276,28 +276,36 @@ void GameScene::PointGenerate(Vector3 position) {
 
 void GameScene::OnCollisions() {
 
-	float dist = CollisionDetection(player_->GetWorldPosition(), enemy_->GetWorldPosition());
+	
+	#pragma region PlayerとEnemyの当たり判定
 
-	// 4 = 二つの円の半径足したもの
-	if (dist <= 4) {
-		// outFlag = true;
-		hitFlag = true;
-		timeFlag = true;
-		if (collisionFlag_ == 1) {
-			player_->OnCollision(enemy_.get());
-			collisionFlag_ = 0;
+	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
+		float dist = CollisionDetection(player_->GetWorldPosition(), enemy->GetWorldPosition());
+
+		// 4 = 二つの円の半径足したもの
+		if (dist <= 4) {
+			// outFlag = true;
+			hitFlag = true;
+			timeFlag = true;
+			if (collisionFlag_ == 1) {
+				player_->OnCollision(enemy.get());
+				collisionFlag_ = 0;
+			}
+		} else {
+			outFlag = false;
 		}
-	} else {
-		outFlag = false;
+
+		if (collisionFlag_ == 0) {
+			collisionTime_++;
+		}
+		if (collisionTime_ >= 60) {
+			collisionFlag_ = 1;
+			collisionTime_ = 0;
+		}
+
 	}
 
-	if (collisionFlag_ == 0) {
-		collisionTime_++;
-	}
-	if (collisionTime_ >= 60) {
-		collisionFlag_ = 1;
-		collisionTime_ = 0;
-	}
+	#pragma endregion
 
 	float itemPlayDist = CollisionDetection(player_->GetWorldPosition(), item_->GetWorldPosition());
 
