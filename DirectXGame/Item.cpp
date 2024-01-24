@@ -1,9 +1,11 @@
 ﻿#include "Item.h"
 #include <cassert>
 
-void Item::Initialize(Model* model) {
+void Item::Initialize(Model* model,Vector3 position) {
 	worldTransform_.Initialize();
 	assert(model);
+
+	worldTransform_.translation_ = position;
 
 	model_ = model;
 

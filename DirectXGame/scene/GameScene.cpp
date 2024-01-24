@@ -38,9 +38,9 @@ void GameScene::Initialize() {
 	// enemy_ = std::make_unique<Enemy>();
 	// enemy_->Initialize(modelEnemy_.get());
 
-	// アイテムの生成と初期化
-	item_ = std::make_unique<Item>();
-	item_->Initialize(modelItem_.get());
+	//// アイテムの生成と初期化
+	// item_ = std::make_unique<Item>();
+	// item_->Initialize(modelItem_.get(),);
 
 	// 追従カメラの生成と初期化処理
 	followCamera_ = std::make_unique<FollowCamera>();
@@ -69,9 +69,11 @@ void GameScene::Initialize() {
 
 	viewProjection_.rotation_ = {89.5f, 0.0f, 0.0f};
 
-	// CSVファイル読み込み
-	LoadPointPopData();
+	// 敵のCSVファイル読み込み
+	LoadEnemyPopData();
 
+	// アイテムのCSVファイル読み込み
+	LoadItemPopData();
 }
 
 void GameScene::Update() {
@@ -155,8 +157,11 @@ void GameScene::Update() {
 	    isSceneEnd = true;
 	}*/
 
-	// CSVファイルの更新処理
-	UpdataPointPopCommands();
+	// 敵のCSVファイルの更新処理
+	UpdataEnemyPopCommands();
+
+	// アイテムのCSVファイルの更新処理
+	UpdataItemPopCommands();
 
 	viewProjection_.UpdateMatrix();
 }
@@ -194,9 +199,12 @@ void GameScene::Draw() {
 		enemy->Draw(viewProjection_);
 	}
 
+	for (const std::unique_ptr<Item>& item : items_) {
+		item->Draw(viewProjection_);
+	}
+
 	skydome_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
-	item_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -216,24 +224,38 @@ void GameScene::Draw() {
 #pragma endregion
 }
 
-void GameScene::LoadPointPopData() {
-	pointPopCommnds.clear();
+void GameScene::LoadEnemyPopData() {
+	enemyPopCommands.clear();
 	std::ifstream file;
 	file.open("Resources/ItemPop.csv");
 	assert(file.is_open());
 
 	// ファイルの内容を文字列ストリームにコピー
-	pointPopCommnds << file.rdbuf();
+	enemyPopCommands << file.rdbuf();
 
 	// ファイルを閉じる
 	file.close();
 }
 
-void GameScene::UpdataPointPopCommands() { // 1行分の文字列を入れる変数
+void GameScene::LoadItemPopData() {
+	itemPopCommands.clear();
+	std::ifstream file;
+	file.open("Resources/ItemPop.csv");
+	assert(file.is_open());
+
+	// ファイルの内容を文字列ストリームにコピー
+	itemPopCommands << file.rdbuf();
+
+	// ファイルを閉じる
+	file.close();
+}
+
+void GameScene::UpdataEnemyPopCommands() {
+	// 1行分の文字列を入れる変数
 	std::string line;
 
 	// コマンド実行ループ
-	while (getline(pointPopCommnds, line)) {
+	while (getline(enemyPopCommands, line)) {
 		std::istringstream line_stream(line);
 
 		std::string word;
@@ -261,23 +283,67 @@ void GameScene::UpdataPointPopCommands() { // 1行分の文字列を入れる変
 			getline(line_stream, word, ',');
 			float z = (float)std::atof(word.c_str());
 
-			PointGenerate({x, y, z});
+			EnemyGenerate({x, y, z});
 		}
 	}
 }
 
-void GameScene::PointGenerate(Vector3 position) {
-	// アイテムの生成と初期化処理
+void GameScene::UpdataItemPopCommands() { // 1行分の文字列を入れる変数
+	std::string line;
+
+	// コマンド実行ループ
+	while (getline(itemPopCommands, line)) {
+		std::istringstream line_stream(line);
+
+		std::string word;
+		// 　,区切りで行の先頭文字列を所得
+
+		getline(line_stream, word, ',');
+
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			// コメント行を飛ばす
+			continue;
+		}
+
+		// POPコマンド
+		if (word.find("POP") == 0) {
+			// x座標
+			getline(line_stream, word, ',');
+			float x = (float)std::atof(word.c_str());
+
+			// y座標
+			getline(line_stream, word, ',');
+			float y = (float)std::atof(word.c_str());
+
+			// z座標
+			getline(line_stream, word, ',');
+			float z = (float)std::atof(word.c_str());
+
+			ItemGenerate({x, y, z});
+		}
+	}
+}
+
+void GameScene::EnemyGenerate(Vector3 position) {
+	// 敵の生成と初期化処理
 	Enemy* enemy = new Enemy();
 	enemy->Initialize(modelEnemy_.get(), position);
 
 	enemys_.push_back(static_cast<std::unique_ptr<Enemy>>(enemy));
 }
 
+void GameScene::ItemGenerate(Vector3 position) {
+	// アイテムの生成と初期化処理
+	Item* item = new Item();
+	item->Initialize(modelItem_.get(), position);
+
+	items_.push_back(static_cast<std::unique_ptr<Item>>(item));
+}
+
 void GameScene::OnCollisions() {
 
-	
-	#pragma region PlayerとEnemyの当たり判定
+#pragma region PlayerとEnemyの当たり判定
 
 	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
 		float dist = CollisionDetection(player_->GetWorldPosition(), enemy->GetWorldPosition());
@@ -302,30 +368,36 @@ void GameScene::OnCollisions() {
 			collisionFlag_ = 1;
 			collisionTime_ = 0;
 		}
-
 	}
 
-	#pragma endregion
+#pragma endregion
 
-	float itemPlayDist = CollisionDetection(player_->GetWorldPosition(), item_->GetWorldPosition());
+#pragma region PlayerとItemの当たり判定
+	for (const std::unique_ptr<Item>& item : items_) {
 
-	if (itemPlayDist <= 4) {
-		if (player_->GetDirection() == false) {
-			player_->SetSirection(true);
-		} else if (player_->GetDirection() == true) {
-			player_->SetSirection(false);
+		float itemPlayDist =
+		    CollisionDetection(player_->GetWorldPosition(), item->GetWorldPosition());
+
+		if (itemPlayDist <= 4) {
+			if (player_->GetDirection() == false) {
+				player_->SetSirection(true);
+			} else if (player_->GetDirection() == true) {
+				player_->SetSirection(false);
+			}
 		}
 	}
+
+#pragma endregion
 
 	/*float itemEnemyDist =
 	    CollisionDetection(item_->GetWorldPosition(), enemy_->GetWorldPosition());
 
 	if (itemEnemyDist<=4) {
-		if (enemy_->GetDirection() == false) {
-			enemy_->SetSirection(true);
-		} else if (enemy_->GetDirection() == true) {
-			enemy_->SetSirection(false);
-		}
+	    if (enemy_->GetDirection() == false) {
+	        enemy_->SetSirection(true);
+	    } else if (enemy_->GetDirection() == true) {
+	        enemy_->SetSirection(false);
+	    }
 	}*/
 
 	if (timeFlag) {

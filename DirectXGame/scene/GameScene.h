@@ -6,22 +6,16 @@
 #include "Enemy.h"
 #include "FollowCamera.h"
 #include "Ground.h"
+#include "ImGuiManager.h"
 #include "Input.h"
+#include "Item.h"
 #include "Model.h"
 #include "Player.h"
+#include "Scene.h"
 #include "Skydome.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "Player.h"
-#include "Enemy.h"
-#include "FollowCamera.h"
-#include "DebugCamera.h"
-#include "Skydome.h"
-#include "Ground.h"
-#include "Item.h"
-#include "ImGuiManager.h"
-#include "Scene.h"
 
 /// <summary>
 /// ゲームシーン
@@ -55,20 +49,36 @@ public: // メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// ポイントアイテム発生データを読み込み
+	/// 敵の発生データを読み込み
 	/// </summary>
-	void LoadPointPopData();
+	void LoadEnemyPopData();
 
 	/// <summary>
-	/// ポイントアイテム発生コマンドの更新
+	/// アイテム発生データを読み込み
 	/// </summary>
-	void UpdataPointPopCommands();
+	void LoadItemPopData();
 
 	/// <summary>
-	/// ポイントアイテムの生成
+	/// 敵の発生コマンドの更新
+	/// </summary>
+	void UpdataEnemyPopCommands();
+
+	/// <summary>
+	/// アイテムの発生コマンドの更新
+	/// </summary>
+	void UpdataItemPopCommands();
+
+	/// <summary>
+	/// 敵の生成
 	/// </summary>
 	/// <param name="position"></param>
-	void PointGenerate(Vector3 position);
+	void EnemyGenerate(Vector3 position);
+
+	/// <summary>
+	/// アイテムの生成
+	/// </summary>
+	/// <param name="positioin"></param>
+	void ItemGenerate(Vector3 position);
 
 	void OnCollisions();
 
@@ -96,26 +106,25 @@ private: // メンバ変数
 	std::unique_ptr<Model> modelGround_;
 	// アイテムの3Dモデル
 	std::unique_ptr<Model> modelItem_;
-	
+
 	// 自キャラ
 	std::unique_ptr<Player> player_;
 	// 追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
-	//デバックカメラ
+	// デバックカメラ
 	std::unique_ptr<DebugCamera> debugCamera_;
 	// 地面
 	std::unique_ptr<Ground> ground_;
-	//スカイドーム
+	// スカイドーム
 	std::unique_ptr<Skydome> skydome_;
-	// アイテム
-	std::unique_ptr<Item> item_;
-	// 　ポイントアイテム発生コマンド
-	std::stringstream pointPopCommnds;
 	// 敵
 	std::list<std::unique_ptr<Enemy>> enemys_;
-	// 敵発生コマンド
-	std::stringstream enemyPopCommnds;
-
+	// 敵の発生コマンド
+	std::stringstream enemyPopCommands;
+	// アイテム
+	std::list<std::unique_ptr<Item>> items_;
+	// アイテムの発生コマンド
+	std::stringstream itemPopCommands;
 
 	bool isDebugCameraActive_ = false;
 
