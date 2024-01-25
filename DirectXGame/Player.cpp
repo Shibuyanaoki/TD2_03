@@ -42,11 +42,12 @@ void Player::Update() {
 	// ゲームパッド状態取得、ゲームパッドが有効の場合if文が通る
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		// 移動量
-		joyMove_ = {
-		    (float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed, // Lスティックの横成分
-		    0.0f,
-		    (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed, // Lスティックの縦成分
-		};
+		if ((float)joyState.Gamepad.sThumbLX / SHRT_MAX != 0) {
+			joyMove_.x = (float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed; // Lスティックの横成分
+		}
+		if ((float)joyState.Gamepad.sThumbLY / SHRT_MAX != 0) {
+			joyMove_.z = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed; // Lスティックの横成分
+		}
 	}
 
 	// Matrix4x4 rotationXMatrix = MakeRotateXmatrix(viewProjection_->rotation_.x);
@@ -115,6 +116,7 @@ void Player::Update() {
 	if (direction_ == false) {
 		worldTransform_.rotation_.y -= rotationSpeed_;
 	}
+
 	if (direction_ == true) {
 		worldTransform_.rotation_.y += rotationSpeed_;
 	}
@@ -123,26 +125,26 @@ void Player::Update() {
 	// 行列を定数バッファに転送
 	worldTransform_.UpdateMatrix();
 
-	//ImGui::Begin("rotation_");
-	//ImGui::InputInt("Direction", &direction_);
+	// ImGui::Begin("rotation_");
+	// ImGui::InputInt("Direction", &direction_);
 	//// ImGui::InputInt("RotationSpeed", &rotationSpeed_);
-	//ImGui::End();
+	// ImGui::End();
 
 	// ImGui::Begin("Player");
-	/*float Position[3] = {
-	    worldTransform_.translation_.x, worldTransform_.translation_.y,
-	    worldTransform_.translation_.z};
+	///*float Position[3] = {
+	//    worldTransform_.translation_.x, worldTransform_.translation_.y,
+	//    worldTransform_.translation_.z};
 
-	ImGui::SliderFloat3("Player Translation", Position, -65.0f, 65.0f);
-	ImGui::End();*/
+	// ImGui::SliderFloat3("Player Translation", Position, -65.0f, 65.0f);
+	// ImGui::End();*/
+
+	ImGui::Begin("rotationNum");
+	ImGui::InputFloat("Num", &rotationNum_);
+
+	ImGui::End();
 }
 
-void Player::Draw(ViewProjection& viewProjection, bool out) {
-
-	if (out == false) {
-		model_->Draw(worldTransform_, viewProjection);
-	}
-}
+void Player::Draw(ViewProjection& viewProjection) { model_->Draw(worldTransform_, viewProjection); }
 
 const WorldTransform& Player::GetWorldTransform() {
 	// TODO: return ステートメントをここに挿入します
@@ -176,4 +178,3 @@ void Player::OnCollision(Base* other) {
 
 	// SetMove({cosf(radian * 3.14f / 2), 0.0f, sinf(radian * 3.14f / 2)});
 }
-

@@ -16,7 +16,7 @@ public:
 
 	void Update();
 
-	void Draw(ViewProjection& viewProjection_, bool out);
+	void Draw(ViewProjection& viewProjection_);
 
 	void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
@@ -39,7 +39,12 @@ public:
 
 	bool GetDirection() { return direction_; }
 
+	float GetRotationNum() { return rotationNum_; }
+
+	//setter
 	bool SetSirection(bool direction) { return direction_ = direction; }
+
+	float SetRotationNum(float Num) { return _ += Num; }
 
 public: // オーバーライド
 	void OnCollision(Base* other) override;
@@ -71,6 +76,7 @@ private:
 	float radian = 0;
 	Vector3 position_ = {0.0f, 0.0f, -30.0f};
 	
+	float rotationNum_ = 100;
 
 	float rot;
 	float acceleration = 0.0f;

@@ -91,6 +91,10 @@ void GameScene::Update() {
 
 	ground_->Update();
 
+	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
+		enemy->Update();
+	}
+
 	OnCollisions();
 
 	if (input_->TriggerKey(DIK_LSHIFT) && isDebugCameraActive_ == false) {
@@ -115,8 +119,8 @@ void GameScene::Update() {
 		viewProjection_.TransferMatrix();
 	}
 	ImGui::Begin("Collision");
-	ImGui::InputInt("CollisionTime", &collisionTime_);
-	ImGui::InputInt("CollisionFlag", &collisionFlag_);
+	/*ImGui::InputInt("CollisionTime", &collisionTime_);
+	ImGui::InputInt("CollisionFlag", &collisionFlag_);*/
 	ImGui::End();
 
 	ImGui::Begin("Camera");
@@ -164,6 +168,10 @@ void GameScene::Update() {
 	UpdataItemPopCommands();
 
 	viewProjection_.UpdateMatrix();
+
+	if (player_->GetRotationNum() <= 0) {
+		isSceneEnd = true;
+	}
 }
 
 void GameScene::Draw() {
@@ -193,7 +201,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	player_->Draw(viewProjection_, outFlag);
+	player_->Draw(viewProjection_);
 
 	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
 		enemy->Draw(viewProjection_);
@@ -227,7 +235,7 @@ void GameScene::Draw() {
 void GameScene::LoadEnemyPopData() {
 	enemyPopCommands.clear();
 	std::ifstream file;
-	file.open("Resources/ItemPop.csv");
+	file.open("Resources/EnemyPop.csv");
 	assert(file.is_open());
 
 	// ファイルの内容を文字列ストリームにコピー
@@ -349,25 +357,30 @@ void GameScene::OnCollisions() {
 		float dist = CollisionDetection(player_->GetWorldPosition(), enemy->GetWorldPosition());
 
 		// 4 = 二つの円の半径足したもの
-		if (dist <= 4) {
-			// outFlag = true;
-			hitFlag = true;
-			timeFlag = true;
-			if (collisionFlag_ == 1) {
+		if (dist <= 4 && enemyCollisionFlag_ == false) {
+
 				player_->OnCollision(enemy.get());
-				collisionFlag_ = 0;
-			}
-		} else {
-			outFlag = false;
+
+				if (player_->GetDirection() == enemy->GetDirection()) {
+					player_->SetRotationNum(-10.0f);
+				}
+
+				if (player_->GetDirection() != enemy->GetDirection()) {
+					player_->SetRotationNum(10.0f);
+				}
+
+				enemyCollisionFlag_ = true;
+		}
+	}
+
+	if (enemyCollisionFlag_ == true) {
+		enemyTimer_--;
+
+		if (enemyTimer_ <= 0) {
+			    enemyCollisionFlag_ = false;
+			    enemyTimer_ = 60;
 		}
 
-		if (collisionFlag_ == 0) {
-			collisionTime_++;
-		}
-		if (collisionTime_ >= 60) {
-			collisionFlag_ = 1;
-			collisionTime_ = 0;
-		}
 	}
 
 #pragma endregion
@@ -378,39 +391,49 @@ void GameScene::OnCollisions() {
 		float itemPlayDist =
 		    CollisionDetection(player_->GetWorldPosition(), item->GetWorldPosition());
 
-		if (itemPlayDist <= 4) {
+		if (itemPlayDist <= 4 && itemCollisionFlag_ == false) {
 			if (player_->GetDirection() == false) {
 				player_->SetSirection(true);
+
 			} else if (player_->GetDirection() == true) {
 				player_->SetSirection(false);
+			}
+
+			itemCollisionFlag_ = true;
+
+		}
+	}
+
+	if (itemCollisionFlag_ == true) {
+		itemTimer_--;
+
+		if (itemTimer_ <= 0) {
+			itemCollisionFlag_ = false;
+			itemTimer_ = 60;
+		}
+	}
+
+#pragma endregion
+
+#pragma region EnemyとItemの当たり判定
+	for (const std::unique_ptr<Item>& item : items_) {
+		for (const std::unique_ptr<Enemy>& enemy : enemys_) {
+
+			float itemEnemyDist =
+			    CollisionDetection(item->GetWorldPosition(), enemy->GetWorldPosition());
+
+			if (itemEnemyDist <= 4) {
+				if (enemy->GetDirection() == false) {
+					enemy->SetSirection(true);
+				} else if (enemy->GetDirection() == true) {
+					enemy->SetSirection(false);
+				}
 			}
 		}
 	}
 
 #pragma endregion
 
-	/*float itemEnemyDist =
-	    CollisionDetection(item_->GetWorldPosition(), enemy_->GetWorldPosition());
-
-	if (itemEnemyDist<=4) {
-	    if (enemy_->GetDirection() == false) {
-	        enemy_->SetSirection(true);
-	    } else if (enemy_->GetDirection() == true) {
-	        enemy_->SetSirection(false);
-	    }
-	}*/
-
-	if (timeFlag) {
-		time++;
-		if (time >= 60) {
-			resetFlag();
-		}
-	}
 }
 
-void GameScene::resetFlag() {
-	timeFlag = false;
-	hitFlag = false;
-	outFlag = false;
-	time = 0;
-}
+void GameScene::resetFlag() {}

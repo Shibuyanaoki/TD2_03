@@ -128,14 +128,16 @@ private: // メンバ変数
 
 	bool isDebugCameraActive_ = false;
 
-	int collisionFlag_ = 1;
-	int collisionTime_ = 0;
+	/*int collisionFlag_ = 1;
+	int collisionTime_ = 0;*/
 
-	bool outFlag = false;
-	bool hitFlag = false;
+	// 当たり判定のフラグ
+	bool enemyCollisionFlag_ = false;
+	bool itemCollisionFlag_ = false;
 
-	int timeFlag = false;
-	int time = 0;
+	// 当たり判定タイマー
+	int enemyTimer_ = 60;
+	int itemTimer_ = 60;
 
 	float radian = 0;
 

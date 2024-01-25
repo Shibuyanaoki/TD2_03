@@ -5,4 +5,5 @@ enum class Scene {
 	EX,
 	GAME,
 	GAMECLEAR,
+	GAMEOVER
 };
