@@ -23,6 +23,8 @@ void Player::Update() {
 		worldTransform_.translation_ = {0.0f, 0.0f, -30.0f};
 		move_ = {0, 0, 0};
 		keyMove_ = {0, 0, 0};
+		acceleration = 0.0f;
+		rot = 0.0f;
 	}
 
 	if (input_->TriggerKey(DIK_SPACE) && direction_ == 0) {
@@ -72,17 +74,43 @@ void Player::Update() {
 	// 移動量に速さを反映(θ度の移動ベクトル)
 	// rotation = (viewProjection_->rotation_.y);
 
-	// move_ = Transform(keyMove_, rotation);
-	//
-	//// 移動量に速さを反映
-	// move_ = Multiply(speed + acceleration, Normalize(keyMove_));
+	 move_ = Transform(move_, rotationYMatrix);
+	move_ = Transform(keyMove_, rotation);
 
+	// 移動量に速さを反映
+	move_ = Multiply(speed + acceleration, Normalize(keyMove_));
+
+	if (direction_ == false) {
+		if (acceleration > 0.0f) {
+			acceleration -= outRation;
+			rot -= inRation;
+			keyMove_.x = -cosf(rot);
+			keyMove_.z = -sinf(rot);
+			rotationSpeed_ -= 0.01f;
+		}
+	}
+	if (direction_ == true) {
+		if (acceleration > 0.0f) {
+			acceleration -= outRation;
+			rot -= inRation;
+			keyMove_.x = +cosf(rot);
+			keyMove_.z = -sinf(rot);
+			rotationSpeed_ -= 0.01f;
+		}
+	}
+
+	//move_ = Transform(joyMove_, rotation);
+
+	// // 移動量に速さを反映
+	// move_ = Multiply(speed + acceleration, Normalize(joyMove_));
 	// if (direction_ == 0) {
+
 	//	if (acceleration > 0.0f) {
+
 	//		acceleration -= 0.01f;
 	//		rot -= 0.08f;
-	//		keyMove_.x = -cosf(rot);
-	//		keyMove_.z = -sinf(rot);
+	//		joyMove_.x = -cosf(rot);
+	//		joyMove_.z = -sinf(rot);
 	//		rotationSpeed_ -= 0.01f;
 	//	}
 	// }
@@ -90,62 +118,64 @@ void Player::Update() {
 	//	if (acceleration > 0.0f) {
 	//		acceleration -= 0.01f;
 	//		rot -= 0.08f;
-	//		keyMove_.x = +cosf(rot);
-	//		keyMove_.z = -sinf(rot);
+	//		joyMove_.x = +cosf(rot);
+	//		joyMove_.z = -sinf(rot);
 	//		rotationSpeed_ -= 0.01f;
 	//	}
 	// }
 
-	move_ = Transform(joyMove_, rotation);
+	
 
-	// 移動量に速さを反映
-	move_ = Multiply(speed + acceleration, Normalize(joyMove_));
-	    // 移動量に速さを反映
-	if (direction_ == false) {
-		if (acceleration > 0.0f) {
-			acceleration -= 0.01f;
-			rot -= 0.08f;
-			joyMove_.x = -cosf(rot);
-			joyMove_.z = -sinf(rot);
-			rotationSpeed_ -= 0.01f;
-		}
-	}
-	if (direction_ == true) {
-		if (acceleration > 0.0f) {
-			acceleration -= 0.01f;
-			rot -= 0.08f;
-			joyMove_.x = +cosf(rot);
-			joyMove_.z = -sinf(rot);
-			rotationSpeed_ -= 0.01f;
-		}
-	}
-		    }
-	if (move_.y != 0 || move_.z != 0) {
-		// worldTransform_.rotation_.y = std::atan2(move.x, move.z);
-	}
+	
 	if (direction_ == false) {
 		worldTransform_.rotation_.y -= rotationSpeed_;
 	}
-
 	if (direction_ == true) {
 		worldTransform_.rotation_.y += rotationSpeed_;
 	}
+
+	float move[3]{move_.x, move_.y, move_.z};
+	float keyMove[3]{keyMove_.x, keyMove_.y, keyMove_.z};
+	float joyMove[3]{joyMove_.x, joyMove_.y, joyMove_.z};
 	// 移動
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move_);
 	// 行列を定数バッファに転送
 	worldTransform_.UpdateMatrix();
+	ImGui::Begin("Rotation");
+	ImGui::Checkbox(" Direction \n false = Right \n true = Left", &direction_);
+	ImGui::InputFloat3("move", move);
+	ImGui::InputFloat3("joyMove", joyMove);
+	ImGui::InputFloat3("KeyMove", keyMove);
 
-	// ImGui::Begin("rotation_");
-	// ImGui::InputInt("Direction", &direction_);
-	//// ImGui::InputInt("RotationSpeed", &rotationSpeed_);
-	// ImGui::End();
-		    worldTransform_.translation_.x, worldTransform_.translation_.y,
-		    worldTransform_.translation_.z};
+	  move_.x = move[0];
+	  move_.y = move[1];
+	  move_.z = move[2];
+
+	  keyMove_.x = keyMove[0];
+	  keyMove_.y = keyMove[1];
+	  keyMove_.z = keyMove[2];
+
+	  joyMove_.x = joyMove[0];
+	  joyMove_.y = joyMove[1];
+	  joyMove_.z = joyMove[2];
+
+	// ImGui::InputInt("RotationSpeed", &rotationSpeed_);
+	ImGui::End();
+
+	
+	ImGui::Begin("RotationSpeed");
+	ImGui::InputFloat("Rot", &inRation, 0.01f);
+	ImGui::InputFloat("Acceleration", &outRation, 0.01f);
+	ImGui::End();
 
 	// ImGui::Begin("Player");
-	///*float Position[3] = {
-	//    worldTransform_.translation_.x, worldTransform_.translation_.y,
-	//    worldTransform_.translation_.z};
+	/*float Position[3] = {
+	    worldTransform_.translation_.x, worldTransform_.translation_.y,
+	    worldTransform_.translation_.z};
+
+	ImGui::SliderFloat3("Player Translation", Position, -65.0f, 65.0f);
+	ImGui::End();*/
+}
 
 	// ImGui::SliderFloat3("Player Translation", Position, -65.0f, 65.0f);
 	// ImGui::End();*/
@@ -178,15 +208,8 @@ void Player::OnCollision(Base* other) {
 	radian = getRadian(
 	    GetWorldPosition().x, GetWorldPosition().z, other->GetWorldPosition().x,
 	    other->GetWorldPosition().z);
-	/*keyMove_.x -= cosf(radian + 3.14f / 2) * 1.0f;
-	keyMove_.z -= sinf(radian + 3.14f / 2) * 1.0f;
-	*/
 	// 反射角
 	rot = -(radian + 3.14f / 4);
 	acceleration = 1.0f;
 	rotationSpeed_ = 0.1f;
-	// keyMove_.x = -cosf(radian + 3.14f / 4) * 1.0f;
-	// keyMove_.z = -sinf(radian + 3.14f / 4) * 1.0f;
-
-	// SetMove({cosf(radian * 3.14f / 2), 0.0f, sinf(radian * 3.14f / 2)});
 }

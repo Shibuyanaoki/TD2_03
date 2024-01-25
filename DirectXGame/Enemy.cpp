@@ -32,6 +32,8 @@ void Enemy::Update(bool direction) {
 	if (input_->PushKey(DIK_R)) {
 		worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
 		move_ = {0.0f, 0, 0};
+		rot = 0.0f;
+		acceleration = 0.0f;
 	}
 	rot -= 0.01f;
 	rotation = MakeRotateYmatrix(rot);
