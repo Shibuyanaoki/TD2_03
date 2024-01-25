@@ -71,6 +71,8 @@ private:
 	float joyX = 0;
 	float joyY = 0;
 		
+	float outRation = 0.01f;
+	float inRation = 0.15f;
 
 	float rot;
 	float acceleration = 0.0f;
