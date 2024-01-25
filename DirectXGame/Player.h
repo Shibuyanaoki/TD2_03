@@ -68,6 +68,9 @@ private:
 	float radian = 0;
 	Vector3 position_ = {0.0f, 0.0f, -30.0f};
 	
+	float joyX = 0;
+	float joyY = 0;
+		
 
 	float rot;
 	float acceleration = 0.0f;
