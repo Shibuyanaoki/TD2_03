@@ -75,54 +75,54 @@ void Player::Update() {
 	// rotation = (viewProjection_->rotation_.y);
 
 	 move_ = Transform(move_, rotationYMatrix);
-	move_ = Transform(keyMove_, rotation);
+	//move_ = Transform(keyMove_, rotation);
 
-	// 移動量に速さを反映
-	move_ = Multiply(speed + acceleration, Normalize(keyMove_));
+	//// 移動量に速さを反映
+	//move_ = Multiply(speed + acceleration, Normalize(keyMove_));
 
-	if (direction_ == false) {
-		if (acceleration > 0.0f) {
-			acceleration -= outRation;
-			rot -= inRation;
-			keyMove_.x = -cosf(rot);
-			keyMove_.z = -sinf(rot);
-			rotationSpeed_ -= 0.01f;
-		}
-	}
-	if (direction_ == true) {
-		if (acceleration > 0.0f) {
-			acceleration -= outRation;
-			rot -= inRation;
-			keyMove_.x = +cosf(rot);
-			keyMove_.z = -sinf(rot);
-			rotationSpeed_ -= 0.01f;
-		}
-	}
-
-	//move_ = Transform(joyMove_, rotation);
-
-	// // 移動量に速さを反映
-	// move_ = Multiply(speed + acceleration, Normalize(joyMove_));
-	// if (direction_ == 0) {
-
+	//if (direction_ == false) {
 	//	if (acceleration > 0.0f) {
-
-	//		acceleration -= 0.01f;
-	//		rot -= 0.08f;
-	//		joyMove_.x = -cosf(rot);
-	//		joyMove_.z = -sinf(rot);
+	//		acceleration -= outRotation;
+	//		rot -= inRotation;
+	//		keyMove_.x = -cosf(rot);
+	//		keyMove_.z = -sinf(rot);
 	//		rotationSpeed_ -= 0.01f;
 	//	}
-	// }
-	// if (direction_ == 1) {
+	//}
+	//if (direction_ == true) {
 	//	if (acceleration > 0.0f) {
-	//		acceleration -= 0.01f;
-	//		rot -= 0.08f;
-	//		joyMove_.x = +cosf(rot);
-	//		joyMove_.z = -sinf(rot);
+	//		acceleration -= outRotation;
+	//		rot -= inRotation;
+	//		keyMove_.x = +cosf(rot);
+	//		keyMove_.z = -sinf(rot);
 	//		rotationSpeed_ -= 0.01f;
 	//	}
-	// }
+	//}
+
+	move_ = Transform(joyMove_, rotation);
+
+	 // 移動量に速さを反映
+	 move_ = Multiply(speed + acceleration, Normalize(joyMove_));
+	 if (direction_ == 0) {
+
+		if (acceleration > 0.0f) {
+
+			acceleration -= outRotation;
+			rot -= inRotation;
+			joyMove_.x = -cosf(rot);
+			joyMove_.z = -sinf(rot);
+			rotationSpeed_ -= 0.01f;
+		}
+	 }
+	 if (direction_ == 1) {
+		if (acceleration > 0.0f) {
+			acceleration -= outRotation;
+			rot -= inRotation;
+			joyMove_.x = +cosf(rot);
+			joyMove_.z = -sinf(rot);
+			rotationSpeed_ -= 0.01f;
+		}
+	 }
 
 	
 
@@ -164,8 +164,8 @@ void Player::Update() {
 
 	
 	ImGui::Begin("RotationSpeed");
-	ImGui::InputFloat("Rot", &inRation, 0.01f);
-	ImGui::InputFloat("Acceleration", &outRation, 0.01f);
+	ImGui::InputFloat("Rot", &inRotation, 0.01f);
+	ImGui::InputFloat("Acceleration", &outRotation, 0.01f);
 	ImGui::End();
 
 	// ImGui::Begin("Player");
@@ -180,10 +180,10 @@ void Player::Update() {
 	// ImGui::SliderFloat3("Player Translation", Position, -65.0f, 65.0f);
 	// ImGui::End();*/
 
-	ImGui::Begin("rotationNum");
+	/*ImGui::Begin("rotationNum");
 	ImGui::InputFloat("Num", &rotationNum_);
 
-	ImGui::End();
+	ImGui::End();*/
 }
 
 void Player::Draw(ViewProjection& viewProjection) { model_->Draw(worldTransform_, viewProjection); }

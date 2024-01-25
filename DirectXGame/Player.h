@@ -39,12 +39,12 @@ public:
 
 	bool GetDirection() { return direction_; }
 
-	float GetRotationNum() { return rotationNum_; }
-
 	//setter
 	bool SetSirection(bool direction) { return direction_ = direction; }
+	
+	float SetInRotation(const float inRot) { return inRotation += inRot; }
 
-	float SetRotationNum(float Num) { return _ += Num; }
+	float SetOutRotation(const float OutRot) { return outRotation += OutRot; }
 
 public: // オーバーライド
 	void OnCollision(Base* other) override;
@@ -79,8 +79,8 @@ private:
 	float joyX = 0;
 	float joyY = 0;
 		
-	float outRation = 0.01f;
-	float inRation = 0.15f;
+	float outRotation = 0.01f;
+	float inRotation = 0.15f;
 
 	float rot;
 	float acceleration = 0.0f;

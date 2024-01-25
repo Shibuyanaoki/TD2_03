@@ -92,7 +92,7 @@ void GameScene::Update() {
 	ground_->Update();
 
 	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
-		enemy->Update();
+		enemy->Update(player_->GetDirection());
 	}
 
 	OnCollisions();
@@ -169,9 +169,9 @@ void GameScene::Update() {
 
 	viewProjection_.UpdateMatrix();
 
-	if (player_->GetRotationNum() <= 0) {
+	/*if (player_->GetRotationNum() <= 0) {
 		isSceneEnd = true;
-	}
+	}*/
 }
 
 void GameScene::Draw() {
@@ -362,13 +362,14 @@ void GameScene::OnCollisions() {
 				player_->OnCollision(enemy.get());
 
 				if (player_->GetDirection() == enemy->GetDirection()) {
-					player_->SetRotationNum(-10.0f);
+					player_->SetInRotation(0.01f);
+				    player_->SetOutRotation(0.01f);
 				}
 
 				if (player_->GetDirection() != enemy->GetDirection()) {
-					player_->SetRotationNum(10.0f);
+				    player_->SetInRotation(-0.01f);
+					player_->SetOutRotation(-0.01f);
 				}
-
 				enemyCollisionFlag_ = true;
 		}
 	}
