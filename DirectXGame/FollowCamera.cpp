@@ -93,10 +93,10 @@ void FollowCamera::Update() { // ゲームパッドの状態を得る変数
 
 	viewProjection_.UpdateMatrix();
 
-	ImGui::Begin("Follow Camera");
+	/*ImGui::Begin("Follow Camera");
 	ImGui::DragFloat3("Camera translation_", &viewProjection_.translation_.x, 0.01f);
 	ImGui::DragFloat3("Camera Rotation", &viewProjection_.rotation_.x, 0.01f);
-	ImGui::End();
+	ImGui::End();*/
 }
 
 void FollowCamera::SceneEndResetPosition() {

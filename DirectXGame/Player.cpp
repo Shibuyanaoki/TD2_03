@@ -19,7 +19,17 @@ void Player::Initialize(Model* model) {
 }
 
 void Player::Update() {
+	if (input_->PushKey(DIK_R)) {
+		worldTransform_.translation_ = {0.0f, 0.0f, -30.0f};
+		move_ = {0, 0, 0};
+		keyMove_ = {0, 0, 0};
+	}
 
+	if (input_->TriggerKey(DIK_SPACE) && direction_ == 0) {
+		direction_ = 1;
+	} else if (input_->TriggerKey(DIK_SPACE) && direction_ == 1) {
+		direction_ = 0;
+	}
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
 
@@ -44,7 +54,7 @@ void Player::Update() {
 		// 移動量
 		if ((float)joyState.Gamepad.sThumbLX / SHRT_MAX != 0) {
 			joyMove_.x = (float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed; // Lスティックの横成分
-		}
+
 		if ((float)joyState.Gamepad.sThumbLY / SHRT_MAX != 0) {
 			joyMove_.z = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed; // Lスティックの横成分
 		}
@@ -56,11 +66,11 @@ void Player::Update() {
 	// Matrix4x4 rotationXYZMatrix =Multiply(rotationXMatrix, Multiply(rotationYMatrix,
 	// rotationZMatrix));
 	rotation = MakeRotateYmatrix(rot);
+		// rotationZMatrix));
+		 rotation = MakeRotateYmatrix(rot);
 
 	// 移動量に速さを反映(θ度の移動ベクトル)
 	// rotation = (viewProjection_->rotation_.y);
-
-	// move_ = Transform(move_, rotationYMatrix);
 
 	// move_ = Transform(keyMove_, rotation);
 	//
@@ -90,7 +100,7 @@ void Player::Update() {
 
 	// 移動量に速さを反映
 	move_ = Multiply(speed + acceleration, Normalize(joyMove_));
-
+	    // 移動量に速さを反映
 	if (direction_ == false) {
 		if (acceleration > 0.0f) {
 			acceleration -= 0.01f;
@@ -109,7 +119,7 @@ void Player::Update() {
 			rotationSpeed_ -= 0.01f;
 		}
 	}
-
+		    }
 	if (move_.y != 0 || move_.z != 0) {
 		// worldTransform_.rotation_.y = std::atan2(move.x, move.z);
 	}
@@ -129,6 +139,8 @@ void Player::Update() {
 	// ImGui::InputInt("Direction", &direction_);
 	//// ImGui::InputInt("RotationSpeed", &rotationSpeed_);
 	// ImGui::End();
+		    worldTransform_.translation_.x, worldTransform_.translation_.y,
+		    worldTransform_.translation_.z};
 
 	// ImGui::Begin("Player");
 	///*float Position[3] = {

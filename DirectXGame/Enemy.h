@@ -11,7 +11,7 @@ class Enemy : public Base {
 public:
 	void Initialize(Model* model, Vector3 position);
 
-	void Update();
+	void Update(bool direction);
 
 	void Draw(ViewProjection& viewProjection);
 
@@ -58,11 +58,19 @@ private:
 	// ポジション
 	Vector3 position_;
 
+	Matrix4x4 rotation;
+	//WorldTransform worldTransform_;
+	Vector3 move_{0.0f, 0, 0};
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
 
 	float radius_ = 2;
+	float rotationSpeed_ = 0.0f;
+	int direction_ = 0;
+	float radian = 0;
+	Vector3 position_ = {0.0f, 0.0f, -30.0f};
 
 	float rot;
 	float acceleration = 0.0f;
+
 };
