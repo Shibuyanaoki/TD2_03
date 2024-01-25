@@ -10,7 +10,6 @@ void Player::Initialize(Model* model) {
 	worldTransform_.Initialize();
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
-	// worldTransform_.rotation_.x = 10.0f;
 	//  NULLポインタチェック
 	assert(model);
 	// 引数からデータを受け取る
@@ -19,6 +18,7 @@ void Player::Initialize(Model* model) {
 }
 
 void Player::Update() {
+
 	if (input_->PushKey(DIK_R)) {
 		worldTransform_.translation_ = {0.0f, 0.0f, -30.0f};
 		move_ = {0, 0, 0};
@@ -57,133 +57,122 @@ void Player::Update() {
 		if ((float)joyState.Gamepad.sThumbLX / SHRT_MAX != 0) {
 			joyMove_.x = (float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed; // Lスティックの横成分
 
-		if ((float)joyState.Gamepad.sThumbLY / SHRT_MAX != 0) {
-			joyMove_.z = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed; // Lスティックの横成分
+			if ((float)joyState.Gamepad.sThumbLY / SHRT_MAX != 0) {
+				joyMove_.z =
+				    (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed; // Lスティックの横成分
+			}
 		}
-	}
+		Matrix4x4 rotationYMatrix = MakeRotateYmatrix(viewProjection_->rotation_.y);
 
-	// Matrix4x4 rotationXMatrix = MakeRotateXmatrix(viewProjection_->rotation_.x);
-	Matrix4x4 rotationYMatrix = MakeRotateYmatrix(viewProjection_->rotation_.y);
-	// Matrix4x4 rotationZMatrix = MakeRotateZmatrix(viewProjection_->rotation_.z);
-	// Matrix4x4 rotationXYZMatrix =Multiply(rotationXMatrix, Multiply(rotationYMatrix,
-	// rotationZMatrix));
-	rotation = MakeRotateYmatrix(rot);
+		rotation = MakeRotateYmatrix(rot);
 		// rotationZMatrix));
-		 rotation = MakeRotateYmatrix(rot);
+		rotation = MakeRotateYmatrix(rot);
 
-	// 移動量に速さを反映(θ度の移動ベクトル)
-	// rotation = (viewProjection_->rotation_.y);
+		move_ = Transform(move_, rotationYMatrix);
+		// move_ = Transform(keyMove_, rotation);
 
-	 move_ = Transform(move_, rotationYMatrix);
-	//move_ = Transform(keyMove_, rotation);
+		//// 移動量に速さを反映
+		// move_ = Multiply(speed + acceleration, Normalize(keyMove_));
 
-	//// 移動量に速さを反映
-	//move_ = Multiply(speed + acceleration, Normalize(keyMove_));
+		// if (direction_ == false) {
+		//	if (acceleration > 0.0f) {
+		//		acceleration -= outRotation;
+		//		rot -= inRotation;
+		//		keyMove_.x = -cosf(rot);
+		//		keyMove_.z = -sinf(rot);
+		//		rotationSpeed_ -= 0.01f;
+		//	}
+		// }
+		// if (direction_ == true) {
+		//	if (acceleration > 0.0f) {
+		//		acceleration -= outRotation;
+		//		rot -= inRotation;
+		//		keyMove_.x = +cosf(rot);
+		//		keyMove_.z = -sinf(rot);
+		//		rotationSpeed_ -= 0.01f;
+		//	}
+		// }
 
-	//if (direction_ == false) {
-	//	if (acceleration > 0.0f) {
-	//		acceleration -= outRotation;
-	//		rot -= inRotation;
-	//		keyMove_.x = -cosf(rot);
-	//		keyMove_.z = -sinf(rot);
-	//		rotationSpeed_ -= 0.01f;
-	//	}
-	//}
-	//if (direction_ == true) {
-	//	if (acceleration > 0.0f) {
-	//		acceleration -= outRotation;
-	//		rot -= inRotation;
-	//		keyMove_.x = +cosf(rot);
-	//		keyMove_.z = -sinf(rot);
-	//		rotationSpeed_ -= 0.01f;
-	//	}
-	//}
+		move_ = Transform(joyMove_, rotation);
 
-	move_ = Transform(joyMove_, rotation);
+		// 移動量に速さを反映
+		move_ = Multiply(speed + acceleration, Normalize(joyMove_));
+		if (direction_ == 0) {
 
-	 // 移動量に速さを反映
-	 move_ = Multiply(speed + acceleration, Normalize(joyMove_));
-	 if (direction_ == 0) {
+			if (acceleration > 0.0f) {
 
-		if (acceleration > 0.0f) {
-
-			acceleration -= outRotation;
-			rot -= inRotation;
-			joyMove_.x = -cosf(rot);
-			joyMove_.z = -sinf(rot);
-			rotationSpeed_ -= 0.01f;
+				acceleration -= outRotation;
+				rot -= inRotation;
+				joyMove_.x = -cosf(rot);
+				joyMove_.z = -sinf(rot);
+				rotationSpeed_ -= 0.01f;
+			}
 		}
-	 }
-	 if (direction_ == 1) {
-		if (acceleration > 0.0f) {
-			acceleration -= outRotation;
-			rot -= inRotation;
-			joyMove_.x = +cosf(rot);
-			joyMove_.z = -sinf(rot);
-			rotationSpeed_ -= 0.01f;
+		if (direction_ == 1) {
+			if (acceleration > 0.0f) {
+				acceleration -= outRotation;
+				rot -= inRotation;
+				joyMove_.x = +cosf(rot);
+				joyMove_.z = -sinf(rot);
+				rotationSpeed_ -= 0.01f;
+			}
 		}
-	 }
 
-	
+		if (direction_ == false) {
+			worldTransform_.rotation_.y -= rotationSpeed_;
+		}
+		if (direction_ == true) {
+			worldTransform_.rotation_.y += rotationSpeed_;
+		}
 
-	
-	if (direction_ == false) {
-		worldTransform_.rotation_.y -= rotationSpeed_;
+		float move[3]{move_.x, move_.y, move_.z};
+		float keyMove[3]{keyMove_.x, keyMove_.y, keyMove_.z};
+		float joyMove[3]{joyMove_.x, joyMove_.y, joyMove_.z};
+
+		// 移動
+		worldTransform_.translation_ = Add(worldTransform_.translation_, move_);
+
+		if (inRotation >= inRotMax || outRotation >= outRotMax) {
+			inRotation = inRotMax;
+			outRotation = outRotMax;
+		}
+
+		if (inRotation <= inRotMin || outRotation <= outRotMin) {
+		
+		}
+
+		// 行列を定数バッファに転送
+		worldTransform_.UpdateMatrix();
+
+#pragma region ImGui
+
+		ImGui::Begin("Move");
+		ImGui::Checkbox(" Direction \n false = Right \n true = Left", &direction_);
+		ImGui::InputFloat3("move", move);
+		ImGui::InputFloat3("joyMove", joyMove);
+		ImGui::InputFloat3("KeyMove", keyMove);
+
+		move_.x = move[0];
+		move_.y = move[1];
+		move_.z = move[2];
+
+		keyMove_.x = keyMove[0];
+		keyMove_.y = keyMove[1];
+		keyMove_.z = keyMove[2];
+
+		joyMove_.x = joyMove[0];
+		joyMove_.y = joyMove[1];
+		joyMove_.z = joyMove[2];
+
+		ImGui::End();
+
+		ImGui::Begin("RotationSpeed");
+		ImGui::InputFloat("Rot", &inRotation, 0.01f);
+		ImGui::InputFloat("Acceleration", &outRotation, 0.01f);
+		ImGui::End();
+
+#pragma endregion
 	}
-	if (direction_ == true) {
-		worldTransform_.rotation_.y += rotationSpeed_;
-	}
-
-	float move[3]{move_.x, move_.y, move_.z};
-	float keyMove[3]{keyMove_.x, keyMove_.y, keyMove_.z};
-	float joyMove[3]{joyMove_.x, joyMove_.y, joyMove_.z};
-	// 移動
-	worldTransform_.translation_ = Add(worldTransform_.translation_, move_);
-	// 行列を定数バッファに転送
-	worldTransform_.UpdateMatrix();
-	ImGui::Begin("Rotation");
-	ImGui::Checkbox(" Direction \n false = Right \n true = Left", &direction_);
-	ImGui::InputFloat3("move", move);
-	ImGui::InputFloat3("joyMove", joyMove);
-	ImGui::InputFloat3("KeyMove", keyMove);
-
-	  move_.x = move[0];
-	  move_.y = move[1];
-	  move_.z = move[2];
-
-	  keyMove_.x = keyMove[0];
-	  keyMove_.y = keyMove[1];
-	  keyMove_.z = keyMove[2];
-
-	  joyMove_.x = joyMove[0];
-	  joyMove_.y = joyMove[1];
-	  joyMove_.z = joyMove[2];
-
-	// ImGui::InputInt("RotationSpeed", &rotationSpeed_);
-	ImGui::End();
-
-	
-	ImGui::Begin("RotationSpeed");
-	ImGui::InputFloat("Rot", &inRotation, 0.01f);
-	ImGui::InputFloat("Acceleration", &outRotation, 0.01f);
-	ImGui::End();
-
-	// ImGui::Begin("Player");
-	/*float Position[3] = {
-	    worldTransform_.translation_.x, worldTransform_.translation_.y,
-	    worldTransform_.translation_.z};
-
-	ImGui::SliderFloat3("Player Translation", Position, -65.0f, 65.0f);
-	ImGui::End();*/
-}
-
-	// ImGui::SliderFloat3("Player Translation", Position, -65.0f, 65.0f);
-	// ImGui::End();*/
-
-	/*ImGui::Begin("rotationNum");
-	ImGui::InputFloat("Num", &rotationNum_);
-
-	ImGui::End();*/
 }
 
 void Player::Draw(ViewProjection& viewProjection) { model_->Draw(worldTransform_, viewProjection); }

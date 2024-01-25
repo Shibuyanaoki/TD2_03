@@ -84,4 +84,10 @@ private:
 
 	float rot;
 	float acceleration = 0.0f;
+
+	const float inRotMax = 0.15f;
+	const float outRotMax = 0.01f;
+
+	const float inRotMin = 0.25f;
+	const float outRotMin = 0.11f;
 };
