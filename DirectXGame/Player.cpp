@@ -31,7 +31,11 @@ void Player::Update() {
 		return false;
 	});
 
-	
+	countdown_--;
+	if (countdown_ <= 0) {
+		PlayerParticle();
+		countdown_ = kFireInterval;
+	}
 
 	if (input_->PushKey(DIK_R)) {
 		worldTransform_.translation_ = {0.0f, 0.0f, -30.0f};

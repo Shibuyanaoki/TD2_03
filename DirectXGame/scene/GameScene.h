@@ -16,6 +16,8 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Particle.h"
+#include "Spark.h"
 
 /// <summary>
 /// ゲームシーン
@@ -107,6 +109,10 @@ private: // メンバ変数
 	// アイテムの3Dモデル
 	std::unique_ptr<Model> modelItem_;
 
+	std::unique_ptr<Model> modelParticle_;
+
+	std::unique_ptr<Model> modelSpark_;
+
 	// 自キャラ
 	std::unique_ptr<Player> player_;
 	// 追従カメラ
@@ -125,6 +131,10 @@ private: // メンバ変数
 	std::list<std::unique_ptr<Item>> items_;
 	// アイテムの発生コマンド
 	std::stringstream itemPopCommands;
+
+	std::unique_ptr<Particle> particle_;
+
+	std::unique_ptr<Spark> spark_;
 
 	bool isDebugCameraActive_ = false;
 
