@@ -30,9 +30,13 @@ void GameScene::Initialize() {
 	// アイテムのモデル
 	modelItem_.reset(Model::CreateFromOBJ("Bard", true));
 
+	modelParticle_.reset(Model::CreateFromOBJ("Particle", true));
+
+	modelSpark_.reset(Model::CreateFromOBJ("Spark", true));
+
 	// プレイヤーの生成と初期化
 	player_ = std::make_unique<Player>();
-	player_->Initialize(modelPlayer_.get());
+	player_->Initialize(modelPlayer_.get(),modelParticle_.get());
 
 	// 敵の生成と初期化
 	// enemy_ = std::make_unique<Enemy>();
@@ -41,6 +45,9 @@ void GameScene::Initialize() {
 	//// アイテムの生成と初期化
 	// item_ = std::make_unique<Item>();
 	// item_->Initialize(modelItem_.get(),);
+
+	spark_ = std::make_unique<Spark>();
+	spark_->Initialize(modelSpark_.get());
 
 	// 追従カメラの生成と初期化処理
 	followCamera_ = std::make_unique<FollowCamera>();
