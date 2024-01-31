@@ -82,9 +82,12 @@ void GameScene::Initialize() {
 	// アイテムのCSVファイル読み込み
 	LoadItemPopData();
 
+	srand((unsigned int)time(nullptr));
+	randomSE_ = (rand() % 3 + 1);
+
 	bgmHandle_ = audio_->LoadWave("BGM/BGM.mp3");
-	playBgm_ = audio_->PlayWave(bgmHandle_, true, 0.5f);
-	isBgm_ = false;
+	//playBgm_ = audio_->PlayWave(bgmHandle_, true, 0.5f);
+	isGameBgm_ = false;
 
 	spark1SE_ = audio_->LoadWave("BGM/Spark1.mp3");
 	spark2SE_ = audio_->LoadWave("BGM/Spark2.mp3");
@@ -389,6 +392,14 @@ void GameScene::OnCollisions() {
 					player_->SetOutRotation(-0.01f);
 				}
 				enemyCollisionFlag_ = true;
+			    randomSE_ = (rand() % 3 + 1);
+			    if (randomSE_ == 1) {
+				    audio_->PlayWave(spark1SE_);
+			    } else if (randomSE_ == 2) {
+				    audio_->PlayWave(spark2SE_);
+			    } else if (randomSE_ == 3) {
+				    audio_->PlayWave(spark3SE_);
+			    }
 		}
 	}
 
@@ -456,3 +467,7 @@ void GameScene::OnCollisions() {
 }
 
 void GameScene::resetFlag() {}
+
+void GameScene::ClearBGM() {}
+
+void GameScene::resetBGM() {}

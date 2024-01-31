@@ -88,7 +88,13 @@ public: // メンバ関数
 
 	bool IsSceneEnd() { return isSceneEnd; }
 
+	void ClearBGM();
+
+	void resetBGM();
+
 	Scene NextScene() { return Scene::GAMECLEAR; }
+
+
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -112,6 +118,8 @@ private: // メンバ変数
 	std::unique_ptr<Model> modelParticle_;
 
 	std::unique_ptr<Model> modelSpark_;
+
+
 
 	// 自キャラ
 	std::unique_ptr<Player> player_;
@@ -149,6 +157,8 @@ private: // メンバ変数
 	int enemyTimer_ = 60;
 	int itemTimer_ = 60;
 
+
+
 	float radian = 0;
 
 	// シーンを終わらせるフラグ
@@ -157,11 +167,21 @@ private: // メンバ変数
 	// サウンド
 	uint32_t bgmHandle_;
 	uint32_t playBgm_;
-	bool isBgm_;
+	bool isGameBgm_;
+
+	bool isTitleBgm_;
+
+	bool isGameOverBgm_;
 
 	uint32_t spark1SE_;
+	bool isSpark1SE_;
 	uint32_t spark2SE_;
+	bool isSpark2SE_;
 	uint32_t spark3SE_;
+	bool isSpark3SE_;
+
+	int randomSE_;
+
 
 	/// <summary>
 	/// ゲームシーン用
