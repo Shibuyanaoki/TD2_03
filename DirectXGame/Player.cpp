@@ -31,6 +31,8 @@ void Player::Update() {
 		return false;
 	});
 
+	
+
 	if (input_->PushKey(DIK_R)) {
 		worldTransform_.translation_ = {0.0f, 0.0f, -30.0f};
 		move_ = {0, 0, 0};
