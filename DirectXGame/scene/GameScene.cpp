@@ -81,6 +81,14 @@ void GameScene::Initialize() {
 
 	// アイテムのCSVファイル読み込み
 	LoadItemPopData();
+
+	bgmHandle_ = audio_->LoadWave("BGM/BGM.mp3");
+	playBgm_ = audio_->PlayWave(bgmHandle_, true, 0.5f);
+	isBgm_ = false;
+
+	spark1SE_ = audio_->LoadWave("BGM/Spark1.mp3");
+	spark2SE_ = audio_->LoadWave("BGM/Spark2.mp3");
+	spark3SE_ = audio_->LoadWave("BGM/Spark3.mp3");
 }
 
 void GameScene::Update() {
@@ -97,6 +105,8 @@ void GameScene::Update() {
 	skydome_->Update();
 
 	ground_->Update();
+
+	spark_->Update();
 
 	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
 		enemy->Update(player_->GetDirection());
