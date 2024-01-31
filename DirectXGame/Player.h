@@ -90,4 +90,6 @@ private:
 
 	const float inRotMin = 0.25f;
 	const float outRotMin = 0.11f;
+
+
 };
