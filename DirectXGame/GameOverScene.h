@@ -6,8 +6,9 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Scene.h"
 
-class GameOver {
+class GameOverScene {
 public:
 	void Initialize();
 
@@ -15,10 +16,20 @@ public:
 
 	void Draw();
 
+	bool IsSceneEnd() { return isSceneEnd; }
+
+	Scene NextScene() { return Scene::TITLE; }
+
+	void Reset();
+
 private:
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 
 	WorldTransform worldTransform_;
+
+	// シーンを終わらせるフラグ
+	bool isSceneEnd = false;
+
 };

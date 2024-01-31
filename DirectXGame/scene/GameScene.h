@@ -84,9 +84,13 @@ public: // メンバ関数
 
 	void resetFlag();
 
-	bool IsSceneEnd() { return isSceneEnd; }
+	bool IsClearSceneEnd() { return isGameClearSceneEnd; }
 
-	Scene NextScene() { return Scene::GAMECLEAR; }
+	bool IsOverSceneEnd() { return isGameOverSceneEnd; }
+
+	Scene NextSceneClear() { return Scene::GAMECLEAR; }
+	
+	Scene NextSceneOver() { return Scene::GAMEOVER; }
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -128,9 +132,6 @@ private: // メンバ変数
 
 	bool isDebugCameraActive_ = false;
 
-	/*int collisionFlag_ = 1;
-	int collisionTime_ = 0;*/
-
 	// 当たり判定のフラグ
 	bool enemyCollisionFlag_ = false;
 	bool itemCollisionFlag_ = false;
@@ -142,7 +143,9 @@ private: // メンバ変数
 	float radian = 0;
 
 	// シーンを終わらせるフラグ
-	bool isSceneEnd = false;
+	bool isGameOverSceneEnd = false;
+
+	bool isGameClearSceneEnd = false;
 
 	/// <summary>
 	/// ゲームシーン用

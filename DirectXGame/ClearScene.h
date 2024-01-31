@@ -19,7 +19,7 @@ public:
 
 	bool IsSceneEnd() { return isSceneEnd; }
 
-	Scene NextScene() { return Scene::EX; }
+	Scene NextScene() { return Scene::GAMECLEAR; }
 
 	void Reset();
 

@@ -132,13 +132,18 @@ void Player::Update() {
 		// 移動
 		worldTransform_.translation_ = Add(worldTransform_.translation_, move_);
 
+		// 回転数の上限
 		if (inRotation >= inRotMax || outRotation >= outRotMax) {
-			inRotation = inRotMax;
-			outRotation = outRotMax;
+		/*	inRotation = inRotMax;
+			outRotation = outRotMax;*/
+			isSceneFlag = true;
 		}
 
-		if (inRotation <= inRotMin || outRotation <= outRotMin) {
-		
+		// 回転数の下限
+		if (inRotation <= inRotMin && outRotation <= outRotMin) {
+			inRotation = inRotMin;
+			outRotation = outRotMin;
+			
 		}
 
 		// 行列を定数バッファに転送

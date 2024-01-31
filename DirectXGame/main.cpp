@@ -2,6 +2,7 @@
 #include "AxisIndicator.h"
 #include "ClearScene.h"
 #include "DirectXCommon.h"
+#include "GameOverScene.h"
 #include "GameScene.h"
 #include "ImGuiManager.h"
 #include "PrimitiveDrawer.h"
@@ -22,6 +23,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	GameScene* gameScene = nullptr;
 	TitleScene* titleScene = nullptr;
 	ClearScene* clearScene = nullptr;
+	GameOverScene* gameOverScene = nullptr;
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
@@ -74,6 +76,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	clearScene = new ClearScene;
 	clearScene->Initialize();
 
+	// ゲームオーバーシーンの初期化
+	gameOverScene = new GameOverScene;
+	gameOverScene->Initialize();
+
 	Scene scene = Scene::GAME;
 
 	// メインループ
@@ -90,6 +96,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		switch (scene) {
 		case Scene::TITLE:
+			// タイトルシーンの毎フレーム処理
+			titleScene->Update();
 
 			if (titleScene->IsSceneEnd() == true) {
 				// 次のシーンを値を代入してシーン切り替え
@@ -97,25 +105,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				titleScene->Reset();
 			}
 
-			// タイトルシーンの毎フレーム処理
-			titleScene->Update();
-
 			break;
 
 		case Scene::GAME:
 			// ゲームシーンの毎フレーム処理
 			gameScene->Update();
 
-			if (gameScene->IsSceneEnd() == true) {
+			if (gameScene->IsClearSceneEnd() == true) {
 				// 次のシーンを値を代入してシーン切り替え
-				scene = gameScene->NextScene();
+				scene = gameScene->NextSceneClear();
 				/*gameScene->StopBGM();
 				gameScene->Reset();*/
+			} else if (gameScene->IsOverSceneEnd() == true) {
+				scene = gameScene->NextSceneOver();
 			}
 
 			break;
 
 		case Scene::GAMECLEAR:
+
+			clearScene->Update();
 
 			if (clearScene->IsSceneEnd() == true) {
 				// 次のシーンを値を代入してシーン切り替え
@@ -125,6 +134,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			// リザルトシーンの毎フレーム処理
 			clearScene->Update();
+
+			break;
+
+		case Scene::GAMEOVER:
+
+			gameOverScene->Update();
+
+			if (gameOverScene->IsSceneEnd() == true) {
+				// 次のシーンを値を代入してシーン切り替え
+				scene = gameOverScene->NextScene();
+				gameOverScene->Reset();
+			}
 
 			break;
 		}
@@ -150,10 +171,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			break;
 		case Scene::GAMECLEAR:
-			// リザルトシーンの描画
+			// ゲームクリアシーンの描画
 			clearScene->Draw();
 
 			break;
+
+		case Scene::GAMEOVER:
+
+			// ゲームオーバーシーン
+			gameOverScene->Draw();
+
+			break;
+
 		}
 
 		// 軸表示の描画

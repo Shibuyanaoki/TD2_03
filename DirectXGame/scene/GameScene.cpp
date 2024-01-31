@@ -157,9 +157,9 @@ void GameScene::Update() {
 		return false;
 	});
 
-	/*if (SceneEndTitle <= 0) {
-	    isSceneEnd = true;
-	}*/
+	if (player_->GetIsSceneFlag() == true) {
+		isGameOverSceneEnd = true;	
+	}
 
 	// 敵のCSVファイルの更新処理
 	UpdataEnemyPopCommands();

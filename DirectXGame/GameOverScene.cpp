@@ -1,25 +1,25 @@
 ﻿#include "GameOverScene.h"
 
-void GameOver::Initialize() {
+void GameOverScene::Initialize() {
 
 	worldTransform_.Initialize();
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 }
 
-void GameOver::Update() {
+void GameOverScene::Update() {
 	
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_A) {
-			Sleep(1 * 300);
-			// isSceneEnd = true;
+			//Sleep(1 * 300);
+			isSceneEnd = true;
 		}
 	}
 }
 
-void GameOver::Draw() {
+void GameOverScene::Draw() {
 	
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
@@ -63,3 +63,5 @@ void GameOver::Draw() {
 
 #pragma endregion 
 }
+
+void GameOverScene::Reset() { isSceneEnd = false; }
