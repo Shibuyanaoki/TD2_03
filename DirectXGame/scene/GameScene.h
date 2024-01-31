@@ -154,6 +154,15 @@ private: // メンバ変数
 	// シーンを終わらせるフラグ
 	bool isSceneEnd = false;
 
+	// サウンド
+	uint32_t bgmHandle_;
+	uint32_t playBgm_;
+	bool isBgm_;
+
+	uint32_t spark1SE_;
+	uint32_t spark2SE_;
+	uint32_t spark3SE_;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
