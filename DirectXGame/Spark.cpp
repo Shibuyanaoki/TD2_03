@@ -1,18 +1,18 @@
-#include "Spark.h"
+ï»¿#include "Spark.h"
 
 void Spark::Initialize(Model* model) {
 	model_ = model;
 
-	// X,Y,Z•ûŒü‚ÌƒXƒP[ƒŠƒ“ƒO‚ğİ’è
+	// X,Y,Zæ–¹å‘ã®ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°ã‚’è¨­å®š
 	worldTransform_.scale_ = {1.0f, 1.0f, 1.0f};
 
-	// X,Y,Z•ûŒü‚Ì‰ñ“]‚ğİ’è
+	// X,Y,Zæ–¹å‘ã®å›è»¢ã‚’è¨­å®š
 	worldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
 
-	//// X,Y,Z•ûŒü‚Ì•½sˆÚ“®‚ğİ’è
+	//// X,Y,Zæ–¹å‘ã®å¹³è¡Œç§»å‹•ã‚’è¨­å®š
 	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
 
-	// ƒ[ƒ‹ƒhƒgƒ‰ƒ“ƒXƒtƒH[ƒ€‚Ì‰Šú‰»
+	// ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒˆãƒ©ãƒ³ã‚¹ãƒ•ã‚©ãƒ¼ãƒ ã®åˆæœŸåŒ–
 	worldTransform_.Initialize();
 }
 

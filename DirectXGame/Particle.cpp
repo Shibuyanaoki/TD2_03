@@ -1,11 +1,11 @@
-#include "Particle.h"
+﻿#include "Particle.h"
 
 void Particle::Initialize(Model* model, const Vector3& position) {
 	assert(model);
 	model_ = model;
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = {position.x, position.y, position.z};
-	worldTransform_.scale_ = {1.0f, 1.0f, 1.0f};
+	worldTransform_.scale_ = {3.0f, 3.0f, 3.0f};
 	velocity_ = {0.4f};
 	speed = 0.01f;
 }

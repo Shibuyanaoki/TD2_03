@@ -230,6 +230,7 @@ void GameScene::Draw() {
 
 	skydome_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
+	//spark_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
