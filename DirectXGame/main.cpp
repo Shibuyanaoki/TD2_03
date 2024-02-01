@@ -9,7 +9,6 @@
 #include "Scene.h"
 #include "TextureManager.h"
 #include "TitleScene.h"
-#include "GameOverScene.h"
 #include "WinApp.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
@@ -97,7 +96,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		switch (scene) {
 		case Scene::TITLE:
-			
 
 			if (titleScene->IsSceneEnd() == true) {
 				// 次のシーンを値を代入してシーン切り替え
@@ -130,7 +128,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		case Scene::GAMECLEAR:
 
-
 			if (clearScene->IsSceneEnd() == true) {
 				// 次のシーンを値を代入してシーン切り替え
 				scene = clearScene->NextScene();
@@ -149,11 +146,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				scene = gameOverScene->NextScene();
 				gameOverScene->Reset();
 			}
-
-			gameOverScene->Update();
-
-			break;
-		}
 
 			// リザルトシーンの毎フレーム処理
 			gameOverScene->Update();
@@ -193,7 +185,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			gameOverScene->Draw();
 
 			break;
-
 		}
 
 		// 軸表示の描画
@@ -205,7 +196,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 描画終了
 		dxCommon->PostDraw();
 	}
-
 	// 各種解放
 	delete gameScene;
 	// 3Dモデル解放

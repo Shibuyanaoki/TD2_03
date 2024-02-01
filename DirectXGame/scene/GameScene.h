@@ -121,8 +121,6 @@ private: // メンバ変数
 
 	std::unique_ptr<Model> modelSpark_;
 
-
-
 	// 自キャラ
 	std::unique_ptr<Player> player_;
 	// 追従カメラ
@@ -155,8 +153,6 @@ private: // メンバ変数
 	// 当たり判定タイマー
 	int enemyTimer_ = 60;
 	int itemTimer_ = 60;
-
-
 
 	float radian = 0;
 

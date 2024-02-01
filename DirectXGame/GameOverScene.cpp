@@ -13,7 +13,7 @@ void GameOverScene::Initialize() {
 
 }
 
-void GameOver::Update() {
+void GameOverScene::Update() {
 
 	if (isBGM_ == false) {
 		playBGM_ = audio_->PlayWave(bgmHandle_, true, 0.5f);
@@ -23,7 +23,7 @@ void GameOver::Update() {
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_X) {
+		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_A) {
 			Sleep(1 * 300);
 			isSceneEnd = true;
 			audio_->PlayWave(buttonSound_);
@@ -76,7 +76,7 @@ void GameOverScene::Draw() {
 #pragma endregion 
 }
 
-void GameOver::Reset() { 
+void GameOverScene::Reset() { 
 	audio_->StopWave(bgmHandle_);
 	isBGM_ = false;
 	isSceneEnd = true; 

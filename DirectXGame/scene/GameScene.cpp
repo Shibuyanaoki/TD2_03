@@ -494,11 +494,10 @@ void GameScene::Reset() {
 	isGameOverSceneEnd = false;
 
 	player_->Reset();
+
+	audio_->StopWave(bgmHandle_);
+
+	isBGM_ = false;
+
 }
 
-void GameScene::Reset() {
-	audio_->StopWave(bgmHandle_);
-	isBGM_ = false;
-	isSceneEnd = false;
-	isGameOverScene = false;
-}

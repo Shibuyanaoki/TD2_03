@@ -39,7 +39,4 @@ private:
 
 	WorldTransform worldTransform_;
 
-	// シーンを終わらせるフラグ
-	bool isSceneEnd = false;
-
 };
