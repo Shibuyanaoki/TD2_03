@@ -5,16 +5,26 @@ void GameOver::Initialize() {
 	worldTransform_.Initialize();
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
+
+	bgmHandle_ = audio_->LoadWave("BGM/GameOverBGM.mp3");
+	isBGM_ = false;
+
 }
 
 void GameOver::Update() {
+
+	if (isBGM_ == false) {
+		playBGM_ = audio_->PlayWave(bgmHandle_, true, 0.5f);
+		isBGM_ = true;
+	}
 	
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_A) {
+		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_X) {
 			Sleep(1 * 300);
-			// isSceneEnd = true;
+			isSceneEnd = true;
 		}
 	}
 }
@@ -62,4 +72,10 @@ void GameOver::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion 
+}
+
+void GameOver::Reset() { 
+	audio_->StopWave(bgmHandle_);
+	isBGM_ = false;
+	isSceneEnd = true; 
 }

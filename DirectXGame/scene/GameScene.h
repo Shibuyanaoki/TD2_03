@@ -84,15 +84,15 @@ public: // メンバ関数
 
 	void OnCollisions();
 
-	void resetFlag();
+	void Reset();
 
 	bool IsSceneEnd() { return isSceneEnd; }
 
-	void ClearBGM();
-
-	void resetBGM();
+	bool IsGameOverScene() { return isGameOverScene; }
 
 	Scene NextScene() { return Scene::GAMECLEAR; }
+
+	Scene GameOver() { return Scene::GAMEOVER; }
 
 
 
@@ -164,22 +164,14 @@ private: // メンバ変数
 	// シーンを終わらせるフラグ
 	bool isSceneEnd = false;
 
+	bool isGameOverScene = false;
+
 	// サウンド
 	uint32_t bgmHandle_;
-	uint32_t playBgm_;
-	bool isGameBgm_;
+	uint32_t playBGM_;
+	bool isBGM_;
 
-	bool isTitleBgm_;
-
-	bool isGameOverBgm_;
-
-	uint32_t spark1SE_;
-	bool isSpark1SE_;
-	uint32_t spark2SE_;
-	bool isSpark2SE_;
-	uint32_t spark3SE_;
-	bool isSpark3SE_;
-
+	uint32_t sparkSE_[3];
 	int randomSE_;
 
 

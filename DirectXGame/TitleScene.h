@@ -29,6 +29,11 @@ private:
 
 	WorldTransform worldTransform_;
 
+	// サウンド
+	uint32_t bgmHandle_;
+	uint32_t playBGM_;
+	bool isBGM_;
+
 	// シーンを終わらせるフラグ
 	bool isSceneEnd = false;
 

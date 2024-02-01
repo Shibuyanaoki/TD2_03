@@ -86,15 +86,23 @@ void GameScene::Initialize() {
 	randomSE_ = (rand() % 3 + 1);
 
 	bgmHandle_ = audio_->LoadWave("BGM/BGM.mp3");
-	//playBgm_ = audio_->PlayWave(bgmHandle_, true, 0.5f);
-	isGameBgm_ = false;
+	isBGM_ = false;
 
-	spark1SE_ = audio_->LoadWave("BGM/Spark1.mp3");
-	spark2SE_ = audio_->LoadWave("BGM/Spark2.mp3");
-	spark3SE_ = audio_->LoadWave("BGM/Spark3.mp3");
+	sparkSE_[0] = audio_->LoadWave("BGM/Spark1.mp3");
+	sparkSE_[1] = audio_->LoadWave("BGM/Spark2.mp3");
+	sparkSE_[2] = audio_->LoadWave("BGM/Spark3.mp3");
 }
 
 void GameScene::Update() {
+
+	// ゲームパッドの状態を得る変数
+	XINPUT_STATE joyState;
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_B) {
+			Sleep(1 * 300);
+			isGameOverScene = true;
+		}
+	}
 
 	// カメラの向きと自機の向きをそろえる
 	// player_->SetViewRotate(followCamera_->GetViewRotate());
@@ -110,6 +118,11 @@ void GameScene::Update() {
 	ground_->Update();
 
 	spark_->Update();
+
+	if (isBGM_ == false) {
+		playBGM_ = audio_->PlayWave(bgmHandle_, true, 0.5f);
+		isBGM_ = true;
+	}
 
 	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
 		enemy->Update(player_->GetDirection());
@@ -394,11 +407,11 @@ void GameScene::OnCollisions() {
 				enemyCollisionFlag_ = true;
 			    randomSE_ = (rand() % 3 + 1);
 			    if (randomSE_ == 1) {
-				    audio_->PlayWave(spark1SE_);
+				    audio_->PlayWave(sparkSE_[0]);
 			    } else if (randomSE_ == 2) {
-				    audio_->PlayWave(spark2SE_);
+				    audio_->PlayWave(sparkSE_[1]);
 			    } else if (randomSE_ == 3) {
-				    audio_->PlayWave(spark3SE_);
+				    audio_->PlayWave(sparkSE_[2]);
 			    }
 		}
 	}
@@ -466,8 +479,9 @@ void GameScene::OnCollisions() {
 
 }
 
-void GameScene::resetFlag() {}
-
-void GameScene::ClearBGM() {}
-
-void GameScene::resetBGM() {}
+void GameScene::Reset() {
+	audio_->StopWave(bgmHandle_);
+	isBGM_ = false;
+	isSceneEnd = false;
+	isGameOverScene = false;
+}

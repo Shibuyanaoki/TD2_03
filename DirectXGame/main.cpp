@@ -8,6 +8,7 @@
 #include "Scene.h"
 #include "TextureManager.h"
 #include "TitleScene.h"
+#include "GameOverScene.h"
 #include "WinApp.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
@@ -22,6 +23,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	GameScene* gameScene = nullptr;
 	TitleScene* titleScene = nullptr;
 	ClearScene* clearScene = nullptr;
+	GameOver* gameOverScene = nullptr;
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
@@ -74,7 +76,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	clearScene = new ClearScene;
 	clearScene->Initialize();
 
-	Scene scene = Scene::GAME;
+	//ゲームオーバーシーンの初期化
+	gameOverScene = new GameOver;
+	gameOverScene->Initialize();
+
+	Scene scene = Scene::TITLE;
 
 	// メインループ
 	while (true) {
@@ -109,8 +115,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (gameScene->IsSceneEnd() == true) {
 				// 次のシーンを値を代入してシーン切り替え
 				scene = gameScene->NextScene();
-				/*gameScene->StopBGM();
-				gameScene->Reset();*/
+				gameScene->Reset();
+			} else if (gameScene->IsGameOverScene() == true) {
+				scene = gameScene->GameOver();
+				gameScene->Reset();
 			}
 
 			break;
@@ -125,6 +133,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			// リザルトシーンの毎フレーム処理
 			clearScene->Update();
+
+			break;
+		case Scene::GAMEOVER:
+
+			if (gameOverScene->IsSceneEnd() == true) {
+				// 次のシーンを値を代入してシーン切り替え
+				scene = gameOverScene->NextScene();
+				gameOverScene->Reset();
+			}
+
+			// リザルトシーンの毎フレーム処理
+			gameOverScene->Update();
 
 			break;
 		}
@@ -152,6 +172,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case Scene::GAMECLEAR:
 			// リザルトシーンの描画
 			clearScene->Draw();
+
+			break;
+		case Scene::GAMEOVER:
+			// リザルトシーンの描画
+			gameOverScene->Draw();
 
 			break;
 		}
