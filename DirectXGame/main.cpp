@@ -9,6 +9,7 @@
 #include "Scene.h"
 #include "TextureManager.h"
 #include "TitleScene.h"
+#include "GameOverScene.h"
 #include "WinApp.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
@@ -149,6 +150,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				gameOverScene->Reset();
 			}
 
+			gameOverScene->Update();
+
+			break;
+		}
+
+			// リザルトシーンの毎フレーム処理
 			gameOverScene->Update();
 
 			break;

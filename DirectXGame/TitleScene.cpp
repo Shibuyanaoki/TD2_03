@@ -4,6 +4,11 @@ void TitleScene::Initialize() {
 	worldTransform_.Initialize();
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
+
+	bgmHandle_ = audio_->LoadWave("BGM/TitleBGM.mp3");
+	isBGM_ = false;
+	buttonSound_ = audio_->LoadWave("BGM/Button1.mp3");
 
 	// 背景のスプライト
 	textureHandle_ = TextureManager::Load("TitleAvoid.png");
@@ -13,12 +18,18 @@ void TitleScene::Initialize() {
 
 void TitleScene::Update() {
 
+	if (isBGM_ == false) {
+		playBGM_ = audio_->PlayWave(bgmHandle_, true, 0.5f);
+		isBGM_ = true;
+	}
+
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_A) {
 			Sleep(1 * 300);
 			isSceneEnd = true;
+			audio_->PlayWave(buttonSound_);
 		}
 	}
 }
@@ -70,4 +81,7 @@ void TitleScene::Draw() {
 #pragma endregion
 }
 
-void TitleScene::Reset() { isSceneEnd = false; }
+void TitleScene::Reset() {
+	audio_->StopWave(playBGM_);
+	isBGM_ = false;
+	isSceneEnd = false; }

@@ -8,11 +8,12 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "math.h"
+#include "Particle.h"
 
 
 class Player : public Base {
 public:
-	void Initialize(Model* model);
+	void Initialize(Model* model, Model* particleModel);
 
 	void Update();
 
@@ -21,6 +22,8 @@ public:
 	void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
 	}
+
+	void PlayerParticle();
 
 	//void SetMove(Vector3 setMove) { setMove = move; }
 	// ワールドトランスフォーム取得
@@ -96,5 +99,13 @@ private:
 	const float outRotMin = 0.01f;
 
 	bool isSceneFlag = false;
+
+	const float inRotMin = 0.25f;
+	const float outRotMin = 0.11f;
+
+	std::list<Particle*> particles_;
+	Model* particleModel_;
+	static const int kFireInterval = 1;
+	int32_t countdown_ = 0;
 
 };

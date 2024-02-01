@@ -30,9 +30,13 @@ void GameScene::Initialize() {
 	// アイテムのモデル
 	modelItem_.reset(Model::CreateFromOBJ("Bard", true));
 
+	modelParticle_.reset(Model::CreateFromOBJ("Particle", true));
+
+	modelSpark_.reset(Model::CreateFromOBJ("Spark", true));
+
 	// プレイヤーの生成と初期化
 	player_ = std::make_unique<Player>();
-	player_->Initialize(modelPlayer_.get());
+	player_->Initialize(modelPlayer_.get(),modelParticle_.get());
 
 	// 敵の生成と初期化
 	// enemy_ = std::make_unique<Enemy>();
@@ -41,6 +45,9 @@ void GameScene::Initialize() {
 	//// アイテムの生成と初期化
 	// item_ = std::make_unique<Item>();
 	// item_->Initialize(modelItem_.get(),);
+
+	spark_ = std::make_unique<Spark>();
+	spark_->Initialize(modelSpark_.get());
 
 	// 追従カメラの生成と初期化処理
 	followCamera_ = std::make_unique<FollowCamera>();
@@ -74,9 +81,28 @@ void GameScene::Initialize() {
 
 	// アイテムのCSVファイル読み込み
 	LoadItemPopData();
+
+	srand((unsigned int)time(nullptr));
+	randomSE_ = (rand() % 3 + 1);
+
+	bgmHandle_ = audio_->LoadWave("BGM/BGM.mp3");
+	isBGM_ = false;
+
+	sparkSE_[0] = audio_->LoadWave("BGM/Spark1.mp3");
+	sparkSE_[1] = audio_->LoadWave("BGM/Spark2.mp3");
+	sparkSE_[2] = audio_->LoadWave("BGM/Spark3.mp3");
 }
 
 void GameScene::Update() {
+
+	// ゲームパッドの状態を得る変数
+	XINPUT_STATE joyState;
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_B) {
+			Sleep(1 * 300);
+			isGameOverScene = true;
+		}
+	}
 
 	// カメラの向きと自機の向きをそろえる
 	// player_->SetViewRotate(followCamera_->GetViewRotate());
@@ -90,6 +116,13 @@ void GameScene::Update() {
 	skydome_->Update();
 
 	ground_->Update();
+
+	spark_->Update();
+
+	if (isBGM_ == false) {
+		playBGM_ = audio_->PlayWave(bgmHandle_, true, 0.5f);
+		isBGM_ = true;
+	}
 
 	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
 		enemy->Update(player_->GetDirection());
@@ -215,6 +248,7 @@ void GameScene::Draw() {
 
 	skydome_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
+	//spark_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -371,11 +405,19 @@ void GameScene::OnCollisions() {
 				player_->SetOutRotation(0.01f);
 			}
 
-			if (player_->GetDirection() != enemy->GetDirection()) {
-				player_->SetInRotation(-0.01f);
-				player_->SetOutRotation(-0.01f);
-			}
-			enemyCollisionFlag_ = true;
+				if (player_->GetDirection() != enemy->GetDirection()) {
+				    player_->SetInRotation(-0.01f);
+					player_->SetOutRotation(-0.01f);
+				}
+				enemyCollisionFlag_ = true;
+			    randomSE_ = (rand() % 3 + 1);
+			    if (randomSE_ == 1) {
+				    audio_->PlayWave(sparkSE_[0]);
+			    } else if (randomSE_ == 2) {
+				    audio_->PlayWave(sparkSE_[1]);
+			    } else if (randomSE_ == 3) {
+				    audio_->PlayWave(sparkSE_[2]);
+			    }
 		}
 	}
 
@@ -452,4 +494,11 @@ void GameScene::Reset() {
 	isGameOverSceneEnd = false;
 
 	player_->Reset();
+}
+
+void GameScene::Reset() {
+	audio_->StopWave(bgmHandle_);
+	isBGM_ = false;
+	isSceneEnd = false;
+	isGameOverScene = false;
 }

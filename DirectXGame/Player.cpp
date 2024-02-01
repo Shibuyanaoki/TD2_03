@@ -5,7 +5,7 @@
 #include <cassert>
 #include <imgui.h>
 
-void Player::Initialize(Model* model) {
+void Player::Initialize(Model* model, Model* particleModel) {
 
 	worldTransform_.Initialize();
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -14,10 +14,28 @@ void Player::Initialize(Model* model) {
 	assert(model);
 	// 引数からデータを受け取る
 	model_ = model;
+	particleModel_ = particleModel;
 	worldTransform_.translation_ = position_;
 }
 
 void Player::Update() {
+
+	for (Particle* particle : particles_) {
+		particle->Update();
+	}
+	particles_.remove_if([](Particle* particle) {
+		if (particle->IsDelete()) {
+			delete particle;
+			return true;
+		}
+		return false;
+	});
+
+	countdown_--;
+	if (countdown_ <= 0) {
+		PlayerParticle();
+		countdown_ = kFireInterval;
+	}
 
 	if (input_->PushKey(DIK_R)) {
 		worldTransform_.translation_ = {0.0f, 0.0f, -30.0f};
@@ -179,7 +197,11 @@ void Player::Update() {
 	}
 }
 
-void Player::Draw(ViewProjection& viewProjection) { model_->Draw(worldTransform_, viewProjection); }
+void Player::Draw(ViewProjection& viewProjection) { model_->Draw(worldTransform_, viewProjection);
+	for (Particle* particle : particles_) {
+		particle->Draw(viewProjection);
+	}
+}
 
 const WorldTransform& Player::GetWorldTransform() {
 	// TODO: return ステートメントをここに挿入します
@@ -217,4 +239,10 @@ void Player::OnCollision(Base* other) {
 	rot = -(radian + 3.14f / 4);
 	acceleration = 1.0f;
 	rotationSpeed_ = 0.1f;
+}
+
+void Player::PlayerParticle() {
+	Particle* newParticle = new Particle();
+	newParticle->Initialize(particleModel_, GetWorldPosition());
+	particles_.push_back(newParticle);
 }

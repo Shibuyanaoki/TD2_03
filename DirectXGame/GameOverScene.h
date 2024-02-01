@@ -27,6 +27,16 @@ private:
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 
+	// シーンを終わらせるフラグ
+	bool isSceneEnd = false;
+
+	// サウンド
+	uint32_t bgmHandle_;
+	uint32_t playBGM_;
+	bool isBGM_;
+
+	uint32_t buttonSound_;
+
 	WorldTransform worldTransform_;
 
 	// シーンを終わらせるフラグ

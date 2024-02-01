@@ -16,6 +16,8 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Particle.h"
+#include "Spark.h"
 
 /// <summary>
 /// ゲームシーン
@@ -92,6 +94,10 @@ public: // メンバ関数
 	
 	Scene NextSceneOver() { return Scene::GAMEOVER; }
 
+	Scene GameOver() { return Scene::GAMEOVER; }
+
+
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -110,6 +116,12 @@ private: // メンバ変数
 	std::unique_ptr<Model> modelGround_;
 	// アイテムの3Dモデル
 	std::unique_ptr<Model> modelItem_;
+
+	std::unique_ptr<Model> modelParticle_;
+
+	std::unique_ptr<Model> modelSpark_;
+
+
 
 	// 自キャラ
 	std::unique_ptr<Player> player_;
@@ -130,6 +142,10 @@ private: // メンバ変数
 	// アイテムの発生コマンド
 	std::stringstream itemPopCommands;
 
+	std::unique_ptr<Particle> particle_;
+
+	std::unique_ptr<Spark> spark_;
+
 	bool isDebugCameraActive_ = false;
 
 	// 当たり判定のフラグ
@@ -140,6 +156,8 @@ private: // メンバ変数
 	int enemyTimer_ = 60;
 	int itemTimer_ = 60;
 
+
+
 	float radian = 0;
 
 	int deadCount = 0;
@@ -148,6 +166,17 @@ private: // メンバ変数
 	bool isGameOverSceneEnd = false;
 
 	bool isGameClearSceneEnd = false;
+
+	bool isGameOverScene = false;
+
+	// サウンド
+	uint32_t bgmHandle_;
+	uint32_t playBGM_;
+	bool isBGM_;
+
+	uint32_t sparkSE_[3];
+	int randomSE_;
+
 
 	/// <summary>
 	/// ゲームシーン用
