@@ -92,16 +92,13 @@ private:
 	float inRotation = 0.15f;
 	float outRotation = 0.01f;
 
-	const float inRotMax = 0.18f; // 0.25f;
+	const float inRotMax = 0.25f; // 0.25f;
 	const float outRotMax = 0.11f;
 
 	const float inRotMin = 0.15f;
 	const float outRotMin = 0.01f;
 
 	bool isSceneFlag = false;
-
-	//const float inRotMin = 0.25f;
-	//const float outRotMin = 0.11f;
 
 	std::list<Particle*> particles_;
 	Model* particleModel_;

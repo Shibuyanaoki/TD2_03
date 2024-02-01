@@ -94,8 +94,6 @@ public: // メンバ関数
 	
 	Scene NextSceneOver() { return Scene::GAMEOVER; }
 
-	Scene GameOver() { return Scene::GAMEOVER; }
-
 
 
 private: // メンバ変数
