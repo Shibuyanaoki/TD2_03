@@ -164,7 +164,7 @@ void GameScene::Update() {
 	float positionRotation[3] = {
 	    viewProjection_.rotation_.x, viewProjection_.rotation_.y, viewProjection_.rotation_.z};
 
-	ImGui::SliderFloat3("Camera Translation", positionTranslation, -65.0f, 65.0f);
+	ImGui::SliderFloat3("Camera Translation", positionTranslation, -65.0f, 300.0f);
 	ImGui::SliderFloat3("Camera Rotation", positionRotation, 0.0f, 1.0f);
 
 	viewProjection_.translation_.x = positionTranslation[0];

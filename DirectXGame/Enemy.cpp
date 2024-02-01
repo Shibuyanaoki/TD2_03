@@ -28,38 +28,51 @@ void Enemy::Update(bool direction) {
 	// move_ = Multiply(speed , Normalize(move_));
 	// Matrix4x4 rotationYMatrix = MakeRotateYmatrix(viewProjection_->rotation_.y);
 	//
-	if (input_->PushKey(DIK_R)) {
+	if (input_->PushKey(DIK_R) ) {
 		worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
 		move_ = {0.0f, 0, 0};
 		rot = 0.0f;
 		acceleration = 0.0f;
+		rotationSpeed_ = 0.0f;
+		inRation = 0.15f;
 	}
 	rot -= 0.01f;
 	rotation = MakeRotateYmatrix(rot);
 
-	if (direction == false) {
-		if (acceleration > 0.0f) {
-			acceleration -= 0.01f;
-			rot -= 0.15f;
+	if (collisionFlag == true) {
+
+		if (direction == false) {
+
+			acceleration -= outRation;
+			inRation += 0.001f;
+			rot -= inRation;
 			move_.x = -cosf(rot);
 			move_.z = -sinf(rot);
 			rotationSpeed_ -= 0.01f;
 		}
-	}
-	if (direction == true) {
-		if (acceleration > 0.0f) {
-			//acceleration -= 0.01f;
-			rot -= 0.15f;
+		if (direction == true) {
+
+			acceleration -= outRation;
+			inRation += 0.001f;
+			rot -= inRation;
 			move_.x = +cosf(rot);
 			move_.z = -sinf(rot);
 			rotationSpeed_ -= 0.01f;
 		}
-	}
+
+		if (inRation >= 0.65) {
+			move_ = {0.0f, 0, 0};
+			acceleration = 0.0f;
+			inRation = 0.15f;
+			collisionFlag = false;
+		}
+	};
 	if (direction == true) {
 		worldTransform_.rotation_.y -= rotationSpeed_;
 	}
 	if (direction == false) {
 		worldTransform_.rotation_.y += rotationSpeed_;
+
 	}
 	// 移動
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move_);
@@ -73,6 +86,9 @@ void Enemy::Update(bool direction) {
 
 	// 行列を定数バッファに転送
 	worldTransform_.UpdateMatrix();
+
+	ImGui::InputFloat("Rot", &inRation, 0.01f);
+	ImGui::InputFloat("Acceleration", &outRation, 0.01f);
 }
 
 void Enemy::Draw(ViewProjection& viewProjection) { model_->Draw(worldTransform_, viewProjection); }
@@ -94,9 +110,16 @@ void Enemy::OnCollision(Base* other) {
 	keyMove_.z -= sinf(radian + 3.14f / 2) * 1.0f;
 	*/
 	// 反射角
-	rot = -(radian + 3.14f / 4);
+	/*rot = -(radian + 3.14f / 4);
 	acceleration = 1.0f;
-	rotationSpeed_ = 0.1f;
+	rotationSpeed_ = 0.1f;*/
+
+	move_ = {0.0f, 0, 0};
+	rot = 0.0f;
+	acceleration = 0.0f;
+	rotationSpeed_ = 0.0f;
+	inRation = 0.15f;
+	collisionFlag = true;
 	// keyMove_.x = -cosf(radian + 3.14f / 4) * 1.0f;
 	// keyMove_.z = -sinf(radian + 3.14f / 4) * 1.0f;
 
