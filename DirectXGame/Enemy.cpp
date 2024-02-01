@@ -63,6 +63,14 @@ void Enemy::Update(bool direction) {
 	}
 	// 移動
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move_);
+
+	// 落ちた時の処理
+	falling();
+
+	/*if (deadCount <= 5) {
+	    isSceneFlag = true;
+	}*/
+
 	// 行列を定数バッファに転送
 	worldTransform_.UpdateMatrix();
 }
@@ -98,6 +106,11 @@ void Enemy::OnCollision(Base* other) {
 void Enemy::falling() {
 	if (worldTransform_.translation_.x >= 63 || worldTransform_.translation_.x <= -61 ||
 	    worldTransform_.translation_.z >= 61 || worldTransform_.translation_.z <= -63) {
-		worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
+		isDead_ = true;
 	}
+}
+
+void Enemy::OnCollsion() {
+	isDead_ = true;
+	
 }

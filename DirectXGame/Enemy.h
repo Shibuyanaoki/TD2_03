@@ -23,7 +23,7 @@ public:
 	const WorldTransform& GetWorldTransform();
 
 	// ワールド座標を取得
-	//Vector3 GetWorldPosition();
+	// Vector3 GetWorldPosition();
 
 	// カメラの向きと自機の向きを合わせる
 	void SetViewRotate(const Vector3 parent) { worldTransform_.rotation_ = parent; }
@@ -38,9 +38,13 @@ public: // オーバーライド
 
 	void falling();
 
+	//getter
 	bool GetDirection() { return direction_; }
 
+	//setter
 	bool SetSirection(bool direction) { return direction_ = direction; }
+
+	void OnCollsion();
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;
@@ -59,7 +63,7 @@ private:
 	Vector3 position_;
 
 	Matrix4x4 rotation;
-	//WorldTransform worldTransform_;
+	// WorldTransform worldTransform_;
 	Vector3 move_{0.0f, 0, 0};
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
@@ -70,5 +74,4 @@ private:
 
 	float rot;
 	float acceleration = 0.0f;
-
 };

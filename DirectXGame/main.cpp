@@ -96,14 +96,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		switch (scene) {
 		case Scene::TITLE:
-			// タイトルシーンの毎フレーム処理
-			titleScene->Update();
+			
 
 			if (titleScene->IsSceneEnd() == true) {
 				// 次のシーンを値を代入してシーン切り替え
 				scene = titleScene->NextScene();
 				titleScene->Reset();
 			}
+
+			// タイトルシーンの毎フレーム処理
+			titleScene->Update();
 
 			break;
 
@@ -114,17 +116,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (gameScene->IsClearSceneEnd() == true) {
 				// 次のシーンを値を代入してシーン切り替え
 				scene = gameScene->NextSceneClear();
-				/*gameScene->StopBGM();
-				gameScene->Reset();*/
+				// シーン切り替え時に色々とリセットする
+				gameScene->Reset();
+
 			} else if (gameScene->IsOverSceneEnd() == true) {
+				// シーン切り替え時に色々とリセットする
 				scene = gameScene->NextSceneOver();
+				gameScene->Reset();
 			}
 
 			break;
 
 		case Scene::GAMECLEAR:
 
-			clearScene->Update();
 
 			if (clearScene->IsSceneEnd() == true) {
 				// 次のシーンを値を代入してシーン切り替え
@@ -132,20 +136,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				clearScene->Reset();
 			}
 
-			// リザルトシーンの毎フレーム処理
+			// クリアシーンの毎フレーム処理
 			clearScene->Update();
 
 			break;
 
 		case Scene::GAMEOVER:
 
-			gameOverScene->Update();
-
 			if (gameOverScene->IsSceneEnd() == true) {
 				// 次のシーンを値を代入してシーン切り替え
 				scene = gameOverScene->NextScene();
 				gameOverScene->Reset();
 			}
+
+			gameOverScene->Update();
 
 			break;
 		}

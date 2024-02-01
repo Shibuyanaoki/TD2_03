@@ -144,11 +144,17 @@ void GameScene::Update() {
 
 	ImGui::End();
 
-	//// ビュープロジェクションの反映
-	// viewProjection_.matView = followCamera_->GetViewProjection().matView;
-	// viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
+		if (enemy->IsDead()) {
+			if (deadCount >= 2) {
+				isGameClearSceneEnd = true;
+			} else {
+				deadCount++;
+			}
+		}
+	}
 
-	// デスフラグの立ったアイテムを削除
+	// デスフラグの立った敵を削除
 	enemys_.remove_if([](std::unique_ptr<Enemy>& enemy) {
 		if (enemy->IsDead()) {
 			enemy.release();
@@ -158,7 +164,7 @@ void GameScene::Update() {
 	});
 
 	if (player_->GetIsSceneFlag() == true) {
-		isGameOverSceneEnd = true;	
+		isGameOverSceneEnd = true;
 	}
 
 	// 敵のCSVファイルの更新処理
@@ -168,10 +174,6 @@ void GameScene::Update() {
 	UpdataItemPopCommands();
 
 	viewProjection_.UpdateMatrix();
-
-	/*if (player_->GetRotationNum() <= 0) {
-		isSceneEnd = true;
-	}*/
 }
 
 void GameScene::Draw() {
@@ -359,18 +361,20 @@ void GameScene::OnCollisions() {
 		// 4 = 二つの円の半径足したもの
 		if (dist <= 4 && enemyCollisionFlag_ == false) {
 
-				player_->OnCollision(enemy.get());
+			player_->OnCollision(enemy.get());
 
-				if (player_->GetDirection() == enemy->GetDirection()) {
-					player_->SetInRotation(0.01f);
-				    player_->SetOutRotation(0.01f);
-				}
+			enemy->OnCollsion();
 
-				if (player_->GetDirection() != enemy->GetDirection()) {
-				    player_->SetInRotation(-0.01f);
-					player_->SetOutRotation(-0.01f);
-				}
-				enemyCollisionFlag_ = true;
+			if (player_->GetDirection() == enemy->GetDirection()) {
+				player_->SetInRotation(0.01f);
+				player_->SetOutRotation(0.01f);
+			}
+
+			if (player_->GetDirection() != enemy->GetDirection()) {
+				player_->SetInRotation(-0.01f);
+				player_->SetOutRotation(-0.01f);
+			}
+			enemyCollisionFlag_ = true;
 		}
 	}
 
@@ -378,10 +382,9 @@ void GameScene::OnCollisions() {
 		enemyTimer_--;
 
 		if (enemyTimer_ <= 0) {
-			    enemyCollisionFlag_ = false;
-			    enemyTimer_ = 60;
+			enemyCollisionFlag_ = false;
+			enemyTimer_ = 60;
 		}
-
 	}
 
 #pragma endregion
@@ -401,7 +404,6 @@ void GameScene::OnCollisions() {
 			}
 
 			itemCollisionFlag_ = true;
-
 		}
 	}
 
@@ -434,7 +436,19 @@ void GameScene::OnCollisions() {
 	}
 
 #pragma endregion
-
 }
 
-void GameScene::resetFlag() {}
+void GameScene::Reset() {
+
+	// 敵のCSVファイル読み込み
+	LoadEnemyPopData();
+
+	// アイテムのCSVファイル読み込み
+	LoadItemPopData();
+
+	isGameClearSceneEnd = false;
+
+	isGameOverSceneEnd = false;
+
+	player_->Reset();
+}

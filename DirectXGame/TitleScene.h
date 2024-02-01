@@ -7,6 +7,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "Scene.h"
+#include "TextureManager.h"
 
 class TitleScene {
 public:
@@ -31,5 +32,8 @@ private:
 
 	// シーンを終わらせるフラグ
 	bool isSceneEnd = false;
+	uint32_t textureHandle_ = 0;
+	Sprite* sprite_ = nullptr;
+
 
 };

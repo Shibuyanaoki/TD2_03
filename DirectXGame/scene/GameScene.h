@@ -82,7 +82,7 @@ public: // メンバ関数
 
 	void OnCollisions();
 
-	void resetFlag();
+	void Reset();
 
 	bool IsClearSceneEnd() { return isGameClearSceneEnd; }
 
@@ -141,6 +141,8 @@ private: // メンバ変数
 	int itemTimer_ = 60;
 
 	float radian = 0;
+
+	int deadCount = 0;
 
 	// シーンを終わらせるフラグ
 	bool isGameOverSceneEnd = false;

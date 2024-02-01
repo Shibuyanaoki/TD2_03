@@ -13,7 +13,7 @@ void GameOverScene::Update() {
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_A) {
-			//Sleep(1 * 300);
+			Sleep(1 * 300);
 			isSceneEnd = true;
 		}
 	}

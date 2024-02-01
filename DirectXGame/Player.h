@@ -34,6 +34,8 @@ public:
 
 	void falling();
 
+	void Reset();
+
 	// getter
 	float GetRadius() { return radius_; }
 

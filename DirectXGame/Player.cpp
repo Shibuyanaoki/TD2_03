@@ -134,8 +134,8 @@ void Player::Update() {
 
 		// 回転数の上限
 		if (inRotation >= inRotMax || outRotation >= outRotMax) {
-		/*	inRotation = inRotMax;
-			outRotation = outRotMax;*/
+			/*	inRotation = inRotMax;
+			    outRotation = outRotMax;*/
 			isSceneFlag = true;
 		}
 
@@ -143,7 +143,6 @@ void Player::Update() {
 		if (inRotation <= inRotMin && outRotation <= outRotMin) {
 			inRotation = inRotMin;
 			outRotation = outRotMin;
-			
 		}
 
 		// 行列を定数バッファに転送
@@ -193,6 +192,18 @@ void Player::falling() {
 	    worldTransform_.translation_.z >= 61 || worldTransform_.translation_.z <= -63) {
 		worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
 	}
+}
+
+void Player::Reset() {
+
+	inRotation = 0.15f;
+
+	outRotation = 0.01f;
+
+	direction_ = false;
+
+	isSceneFlag = false;
+
 }
 
 void Player::OnCollision(Base* other) {
