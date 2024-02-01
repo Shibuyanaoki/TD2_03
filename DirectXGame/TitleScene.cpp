@@ -8,6 +8,7 @@ void TitleScene::Initialize() {
 
 	bgmHandle_ = audio_->LoadWave("BGM/TitleBGM.mp3");
 	isBGM_ = false;
+	buttonSound_ = audio_->LoadWave("BGM/Button1.mp3");
 }
 
 void TitleScene::Update() {
@@ -23,6 +24,7 @@ void TitleScene::Update() {
 		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_A) {
 			Sleep(1 * 300);
 			isSceneEnd = true;
+			audio_->PlayWave(buttonSound_);
 		}
 	}
 }

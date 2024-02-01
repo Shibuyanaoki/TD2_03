@@ -9,6 +9,7 @@ void GameOver::Initialize() {
 
 	bgmHandle_ = audio_->LoadWave("BGM/GameOverBGM.mp3");
 	isBGM_ = false;
+	buttonSound_ = audio_->LoadWave("BGM/Button1.mp3");
 
 }
 
@@ -25,6 +26,7 @@ void GameOver::Update() {
 		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_X) {
 			Sleep(1 * 300);
 			isSceneEnd = true;
+			audio_->PlayWave(buttonSound_);
 		}
 	}
 }

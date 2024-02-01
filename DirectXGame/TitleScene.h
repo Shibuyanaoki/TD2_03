@@ -34,6 +34,8 @@ private:
 	uint32_t playBGM_;
 	bool isBGM_;
 
+	uint32_t buttonSound_;
+
 	// シーンを終わらせるフラグ
 	bool isSceneEnd = false;
 
