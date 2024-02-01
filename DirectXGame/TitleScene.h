@@ -37,6 +37,9 @@ private:
 
 	uint32_t buttonSound_;
 
+	Sprite* fadeSprite = nullptr;
+	Vector4 fadeColor = {1.0f, 1.0f, 1.0f, 1.0f};
+
 	// シーンを終わらせるフラグ
 	bool isSceneEnd = false;
 	uint32_t textureHandle_ = 0;
