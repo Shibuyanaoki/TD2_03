@@ -7,6 +7,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "Base.h"
+#include "ImGuiManager.h"
 
 class Enemy :public Base {
 public:
@@ -57,4 +58,8 @@ private:
 	float rot;
 	float acceleration = 0.0f;
 
+	float outRation = 0.01f;
+	float inRation = 0.15f;
+
+	bool collisionFlag = false;
 };
