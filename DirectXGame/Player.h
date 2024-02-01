@@ -75,7 +75,7 @@ private:
 
 	float radius_ = 2;
 	float rotationSpeed_ = 0.0f;
-	bool  direction_ = 0;
+	bool  direction_ = false;
 
 	float radian = 0;
 	Vector3 position_ = {0.0f, 0.0f, -30.0f};

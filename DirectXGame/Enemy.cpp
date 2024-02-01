@@ -48,7 +48,7 @@ void Enemy::Update(bool direction) {
 	}
 	if (direction == true) {
 		if (acceleration > 0.0f) {
-			acceleration -= 0.01f;
+			//acceleration -= 0.01f;
 			rot -= 0.15f;
 			move_.x = +cosf(rot);
 			move_.z = -sinf(rot);

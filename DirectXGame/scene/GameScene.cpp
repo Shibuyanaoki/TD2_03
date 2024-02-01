@@ -363,7 +363,8 @@ void GameScene::OnCollisions() {
 
 			player_->OnCollision(enemy.get());
 
-			enemy->OnCollsion();
+			//enemy->OnCollsion()
+			enemy->OnCollision(player_.get());
 
 			if (player_->GetDirection() == enemy->GetDirection()) {
 				player_->SetInRotation(0.01f);
