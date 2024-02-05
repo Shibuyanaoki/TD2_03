@@ -80,7 +80,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	gameOverScene = new GameOver;
 	gameOverScene->Initialize();
 
-	Scene scene = Scene::TITLE;
+	Scene scene = Scene::GAME;
 
 	// メインループ
 	while (true) {
