@@ -411,7 +411,14 @@ void GameScene::OnCollisions() {
 			if (player_->GetDirection() != enemy->GetDirection()) {
 				player_->SetInRotation(-0.01f);
 				player_->SetOutRotation(-0.01f);
-				HPColor_.w += 0.1f;
+
+				if (HPColor_.w <= 9) {
+					HPColor_.w = 0.9f;
+				} else {
+					HPColor_.w += 0.1f;
+				}
+
+					
 			}
 			enemyCollisionFlag_ = true;
 			randomSE_ = (rand() % 3 + 1);
@@ -502,4 +509,7 @@ void GameScene::Reset() {
 	audio_->StopWave(bgmHandle_);
 
 	isBGM_ = false;
+
+	HPColor_.w = 0.9f;
+
 }
