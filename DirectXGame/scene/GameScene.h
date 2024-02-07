@@ -10,14 +10,14 @@
 #include "Input.h"
 #include "Item.h"
 #include "Model.h"
+#include "Particle.h"
 #include "Player.h"
 #include "Scene.h"
 #include "Skydome.h"
+#include "Spark.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "Particle.h"
-#include "Spark.h"
 
 /// <summary>
 /// ゲームシーン
@@ -91,10 +91,8 @@ public: // メンバ関数
 	bool IsOverSceneEnd() { return isGameOverSceneEnd; }
 
 	Scene NextSceneClear() { return Scene::GAMECLEAR; }
-	
+
 	Scene NextSceneOver() { return Scene::GAMEOVER; }
-
-
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -103,6 +101,8 @@ private: // メンバ変数
 
 	// カメラのビュープロジェクション
 	ViewProjection viewProjection_;
+
+	Sprite* HPSprite_ = nullptr;
 
 	// 自キャラの3Dモデル
 	std::unique_ptr<Model> modelPlayer_;
@@ -171,6 +171,9 @@ private: // メンバ変数
 	uint32_t sparkSE_[3];
 	int randomSE_;
 
+	float HP;
+
+	Vector4 HPColor_ = {1.0f, 1.0f, 1.0f, 0.9f};
 
 	/// <summary>
 	/// ゲームシーン用

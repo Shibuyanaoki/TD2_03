@@ -36,15 +36,7 @@ void GameScene::Initialize() {
 
 	// プレイヤーの生成と初期化
 	player_ = std::make_unique<Player>();
-	player_->Initialize(modelPlayer_.get(),modelParticle_.get());
-
-	// 敵の生成と初期化
-	// enemy_ = std::make_unique<Enemy>();
-	// enemy_->Initialize(modelEnemy_.get());
-
-	//// アイテムの生成と初期化
-	// item_ = std::make_unique<Item>();
-	// item_->Initialize(modelItem_.get(),);
+	player_->Initialize(modelPlayer_.get(), modelParticle_.get());
 
 	spark_ = std::make_unique<Spark>();
 	spark_->Initialize(modelSpark_.get());
@@ -72,9 +64,9 @@ void GameScene::Initialize() {
 	// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
 
-	viewProjection_.translation_ = {0.0f, 150.0f, -8.7f};
-
-	viewProjection_.rotation_ = {89.5f, 0.0f, 0.0f};
+	// カメラの位置・角度
+	viewProjection_.translation_ = {-0.42f, 126.780f, -102.292f};
+	viewProjection_.rotation_ = {88.913f, 0.0f, 0.0f};
 
 	// 敵のCSVファイル読み込み
 	LoadEnemyPopData();
@@ -91,6 +83,12 @@ void GameScene::Initialize() {
 	sparkSE_[0] = audio_->LoadWave("BGM/Spark1.mp3");
 	sparkSE_[1] = audio_->LoadWave("BGM/Spark2.mp3");
 	sparkSE_[2] = audio_->LoadWave("BGM/Spark3.mp3");
+
+	HP = player_->GetOutRotation();
+
+	// 背景のスプライト
+	uint32_t textureHandle_ = TextureManager::Load("HP.png");
+	HPSprite_ = Sprite::Create(textureHandle_, {100, 500});
 }
 
 void GameScene::Update() {
@@ -130,6 +128,8 @@ void GameScene::Update() {
 
 	OnCollisions();
 
+	HPSprite_->SetColor(HPColor_);
+
 	if (input_->TriggerKey(DIK_LSHIFT) && isDebugCameraActive_ == false) {
 		isDebugCameraActive_ = true;
 	} else if (input_->TriggerKey(DIK_LSHIFT) && isDebugCameraActive_ == true) {
@@ -165,7 +165,7 @@ void GameScene::Update() {
 	    viewProjection_.rotation_.x, viewProjection_.rotation_.y, viewProjection_.rotation_.z};
 
 	ImGui::SliderFloat3("Camera Translation", positionTranslation, -65.0f, 300.0f);
-	ImGui::SliderFloat3("Camera Rotation", positionRotation, 0.0f, 1.0f);
+	ImGui::SliderFloat3("Camera Rotation", positionRotation, 80.0f, 100.0f);
 
 	viewProjection_.translation_.x = positionTranslation[0];
 	viewProjection_.translation_.y = positionTranslation[1];
@@ -248,7 +248,7 @@ void GameScene::Draw() {
 
 	skydome_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
-	//spark_->Draw(viewProjection_);
+	// spark_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -261,6 +261,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	HPSprite_->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -397,27 +399,29 @@ void GameScene::OnCollisions() {
 
 			player_->OnCollision(enemy.get());
 
-			//enemy->OnCollsion()
+			// enemy->OnCollsion()
 			enemy->OnCollision(player_.get());
 
 			if (player_->GetDirection() == enemy->GetDirection()) {
 				player_->SetInRotation(0.01f);
 				player_->SetOutRotation(0.01f);
+				HPColor_.w -= 0.1f;
 			}
 
-				if (player_->GetDirection() != enemy->GetDirection()) {
-				    player_->SetInRotation(-0.01f);
-					player_->SetOutRotation(-0.01f);
-				}
-				enemyCollisionFlag_ = true;
-			    randomSE_ = (rand() % 3 + 1);
-			    if (randomSE_ == 1) {
-				    audio_->PlayWave(sparkSE_[0]);
-			    } else if (randomSE_ == 2) {
-				    audio_->PlayWave(sparkSE_[1]);
-			    } else if (randomSE_ == 3) {
-				    audio_->PlayWave(sparkSE_[2]);
-			    }
+			if (player_->GetDirection() != enemy->GetDirection()) {
+				player_->SetInRotation(-0.01f);
+				player_->SetOutRotation(-0.01f);
+				HPColor_.w += 0.1f;
+			}
+			enemyCollisionFlag_ = true;
+			randomSE_ = (rand() % 3 + 1);
+			if (randomSE_ == 1) {
+				audio_->PlayWave(sparkSE_[0]);
+			} else if (randomSE_ == 2) {
+				audio_->PlayWave(sparkSE_[1]);
+			} else if (randomSE_ == 3) {
+				audio_->PlayWave(sparkSE_[2]);
+			}
 		}
 	}
 
@@ -498,6 +502,4 @@ void GameScene::Reset() {
 	audio_->StopWave(bgmHandle_);
 
 	isBGM_ = false;
-
 }
-

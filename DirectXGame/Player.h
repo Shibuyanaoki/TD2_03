@@ -46,6 +46,8 @@ public:
 
 	bool GetIsSceneFlag() { return isSceneFlag; }
 
+	float GetOutRotation() { return outRotation; }
+
 	//setter
 	bool SetSirection(bool direction) { return direction_ = direction; }
 	
