@@ -19,7 +19,7 @@ public:
 
 	bool IsSceneEnd() { return isSceneEnd; }
 
-	Scene NextScene() { return Scene::EX; }
+	Scene NextScene() { return Scene::TITLE; }
 
 	void Reset();
 
@@ -30,6 +30,12 @@ private:
 	Audio* audio_ = nullptr;
 
 	WorldTransform worldTransform_;
+
+	// サウンド
+	uint32_t bgmHandle_;
+	uint32_t playBGM_;
+	bool isBGM_;
+	int count;
 
 	// シーンを終わらせるフラグ
 	bool isSceneEnd = false;

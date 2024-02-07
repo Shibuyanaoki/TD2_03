@@ -27,6 +27,8 @@ private:
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 
+	
+
 	// シーンを終わらせるフラグ
 	bool isSceneEnd = false;
 

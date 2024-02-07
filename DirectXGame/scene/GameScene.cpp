@@ -82,12 +82,21 @@ void GameScene::Initialize() {
 	// アイテムのCSVファイル読み込み
 	LoadItemPopData();
 
+	gameOverSprite = TextureManager::Load("GameOver.png");
+	gameOverSprite_ =Sprite::Create(gameOverSprite, {0.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f});
+
+	isGameOver_ = false;
+
 	srand((unsigned int)time(nullptr));
 	randomSE_ = (rand() % 3 + 1);
 
 	bgmHandle_ = audio_->LoadWave("BGM/BGM.mp3");
 	isBGM_ = false;
 
+	bgmHandle2_ = audio_->LoadWave("BGM/GameOverBGM.mp3");
+	isBGM2_ = false;
+	buttonSound_ = audio_->LoadWave("BGM/Button1.mp3");
+	
 	sparkSE_[0] = audio_->LoadWave("BGM/Spark1.mp3");
 	sparkSE_[1] = audio_->LoadWave("BGM/Spark2.mp3");
 	sparkSE_[2] = audio_->LoadWave("BGM/Spark3.mp3");
@@ -98,9 +107,29 @@ void GameScene::Update() {
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_B) {
+		if (isGameOver_ == false) {
+			if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_A) {
+				Sleep(1 * 300);
+				isSceneEnd = true;
+			}
+		}
+		if (isGameOver_ == true) {
+			if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_A) {
+				Sleep(1 * 300);
+				isGameOverSceneEnd_ = true;
+			}
+		}
+		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_Y) {
 			Sleep(1 * 300);
-			isGameOverScene = true;
+			isGameOver_ = true;
+		}
+	}
+
+	if (isGameOver_ == true) {
+		audio_->StopWave(playBGM_);
+		if (isBGM2_ == false) {
+			playBGM2_ = audio_->PlayWave(bgmHandle_, true, 0.5f);
+			isBGM2_ = true;
 		}
 	}
 
@@ -259,6 +288,10 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+	 
+	if (isGameOver_ == true) {
+		gameOverSprite_->Draw();
+	}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -480,8 +513,10 @@ void GameScene::OnCollisions() {
 }
 
 void GameScene::Reset() {
-	audio_->StopWave(bgmHandle_);
+	audio_->StopWave(playBGM_);
 	isBGM_ = false;
+	audio_->StopWave(playBGM2_);
+	isBGM2_ = false;
 	isSceneEnd = false;
-	isGameOverScene = false;
+	isGameOver_ = false;
 }

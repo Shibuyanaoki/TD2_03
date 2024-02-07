@@ -21,10 +21,11 @@ void TitleScene::Update() {
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_A) {
+		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_B) {
 			Sleep(1 * 300);
 			isSceneEnd = true;
 			audio_->PlayWave(buttonSound_);
+			
 		}
 	}
 }

@@ -88,11 +88,11 @@ public: // メンバ関数
 
 	bool IsSceneEnd() { return isSceneEnd; }
 
-	bool IsGameOverScene() { return isGameOverScene; }
+	bool IsGameOverSceneEnd() { return isGameOverSceneEnd_; }
 
 	Scene NextScene() { return Scene::GAMECLEAR; }
 
-	Scene GameOver() { return Scene::GAMEOVER; }
+	Scene BackTitleScene() { return Scene::TITLE; }
 
 
 
@@ -157,19 +157,31 @@ private: // メンバ変数
 	int enemyTimer_ = 60;
 	int itemTimer_ = 60;
 
+	Sprite* gameOverSprite_ = nullptr;
+	uint32_t gameOverSprite = 0;
 
 
+	
 	float radian = 0;
 
 	// シーンを終わらせるフラグ
 	bool isSceneEnd = false;
 
-	bool isGameOverScene = false;
+	bool isGameOverSceneEnd_ = false;
+
+	bool isGameOver_;
 
 	// サウンド
 	uint32_t bgmHandle_;
 	uint32_t playBGM_;
 	bool isBGM_;
+
+	// サウンド
+	uint32_t bgmHandle2_;
+	uint32_t playBGM2_;
+	bool isBGM2_;
+
+	uint32_t buttonSound_;
 
 	uint32_t sparkSE_[3];
 	int randomSE_;

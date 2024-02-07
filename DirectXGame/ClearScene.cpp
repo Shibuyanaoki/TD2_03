@@ -5,16 +5,32 @@ void ClearScene::Initialize() {
 	worldTransform_.Initialize();
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
+	
+	bgmHandle_ = audio_->LoadWave("BGM/lvup.mp3");
+	isBGM_ = false;
+	count = 0;
 }
 
 void ClearScene::Update() {
+
+	if (isBGM_ == false) {
+		playBGM_ = audio_->PlayWave(bgmHandle_, true, 0.5f);
+		isBGM_ = true;
+	}
+	count++;
+	if (count >= 360) {
+		count = 360;
+		audio_->StopWave(playBGM_);
+	}
 
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_A) {
 			Sleep(1 * 300);
-			// isSceneEnd = true;
+			isSceneEnd = true;
+			audio_->StopWave(playBGM_);
 		}
 	}
 }
@@ -64,4 +80,8 @@ void ClearScene::Draw() {
 #pragma endregion
 }
 
-void ClearScene::Reset() { isSceneEnd = false; }
+void ClearScene::Reset() {
+	count = 0;
+	isBGM_ = false;
+	isSceneEnd = false;
+}
