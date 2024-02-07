@@ -60,9 +60,9 @@ void GameScene::Initialize() {
 
 	debugCamera_ = std::make_unique<DebugCamera>(1280, 720);
 	// 軸方向表示の表示を有効にする
-	AxisIndicator::GetInstance()->SetVisible(true);
-	// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
-	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
+	//AxisIndicator::GetInstance()->SetVisible(true);
+	//// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
+	//AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
 
 	// カメラの位置・角度
 	viewProjection_.translation_ = {-0.42f, 126.780f, -102.292f};
@@ -146,7 +146,7 @@ void GameScene::Update() {
 	}
 
 	if (isBGM_ == false) {
-		playBGM_ = audio_->PlayWave(bgmHandle_, true, 0.5f);
+		playBGM_ = audio_->PlayWave(bgmHandle_, true, 0.3f);
 		isBGM_ = true;
 	}
 	if (isGameOver_ == false) {
