@@ -3,7 +3,6 @@
 
 #include "MT.h"
 #include <cassert>
-#include <imgui.h>
 
 void Player::Initialize(Model* model, Model* particleModel) {
 
