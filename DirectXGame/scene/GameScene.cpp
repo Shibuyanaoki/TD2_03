@@ -28,7 +28,7 @@ void GameScene::Initialize() {
 	// スカイドームのモデル
 	modelSkydome_.reset(Model::CreateFromOBJ("skydome", true));
 	// アイテムのモデル
-	modelItem_.reset(Model::CreateFromOBJ("Bard", true));
+	modelItem_.reset(Model::CreateFromOBJ("Item", true));
 
 	modelParticle_.reset(Model::CreateFromOBJ("Particle", true));
 

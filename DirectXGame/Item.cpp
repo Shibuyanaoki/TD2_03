@@ -7,6 +7,8 @@ void Item::Initialize(Model* model,Vector3 position) {
 
 	worldTransform_.translation_ = position;
 
+	worldTransform_.scale_ = {5.0f, 5.0f, 5.0f};
+
 	model_ = model;
 
 }
