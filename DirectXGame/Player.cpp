@@ -168,11 +168,11 @@ void Player::Update() {
 
 #pragma region ImGui
 
-		ImGui::Begin("Move");
+		/*ImGui::Begin("Move");
 		ImGui::Checkbox(" Direction \n false = Right \n true = Left", &direction_);
 		ImGui::InputFloat3("move", move);
 		ImGui::InputFloat3("joyMove", joyMove);
-		ImGui::InputFloat3("KeyMove", keyMove);
+		ImGui::InputFloat3("KeyMove", keyMove);*/
 
 		move_.x = move[0];
 		move_.y = move[1];
@@ -186,12 +186,12 @@ void Player::Update() {
 		joyMove_.y = joyMove[1];
 		joyMove_.z = joyMove[2];
 
-		ImGui::End();
+		/*ImGui::End();
 
 		ImGui::Begin("RotationSpeed");
 		ImGui::InputFloat("Rot", &inRotation, 0.01f);
 		ImGui::InputFloat("Acceleration", &outRotation, 0.01f);
-		ImGui::End();
+		ImGui::End();*/
 
 #pragma endregion
 	}

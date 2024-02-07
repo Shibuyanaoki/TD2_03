@@ -151,12 +151,12 @@ void GameScene::Update() {
 
 		viewProjection_.TransferMatrix();
 	}
-	ImGui::Begin("Collision");
-	/*ImGui::InputInt("CollisionTime", &collisionTime_);
-	ImGui::InputInt("CollisionFlag", &collisionFlag_);*/
-	ImGui::End();
+	//ImGui::Begin("Collision");
+	///*ImGui::InputInt("CollisionTime", &collisionTime_);
+	//ImGui::InputInt("CollisionFlag", &collisionFlag_);*/
+	//ImGui::End();
 
-	ImGui::Begin("Camera");
+	/*ImGui::Begin("Camera");
 	float positionTranslation[3] = {
 	    viewProjection_.translation_.x, viewProjection_.translation_.y,
 	    viewProjection_.translation_.z};
@@ -175,7 +175,7 @@ void GameScene::Update() {
 	viewProjection_.rotation_.y = positionRotation[1];
 	viewProjection_.rotation_.z = positionRotation[2];
 
-	ImGui::End();
+	ImGui::End();*/
 
 	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
 		if (enemy->IsDead()) {

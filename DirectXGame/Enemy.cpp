@@ -87,8 +87,8 @@ void Enemy::Update(bool direction) {
 	// 行列を定数バッファに転送
 	worldTransform_.UpdateMatrix();
 
-	ImGui::InputFloat("Rot", &inRation, 0.01f);
-	ImGui::InputFloat("Acceleration", &outRation, 0.01f);
+	/*ImGui::InputFloat("Rot", &inRation, 0.01f);
+	ImGui::InputFloat("Acceleration", &outRation, 0.01f);*/
 }
 
 void Enemy::Draw(ViewProjection& viewProjection) { model_->Draw(worldTransform_, viewProjection); }
