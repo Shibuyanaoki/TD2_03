@@ -84,6 +84,8 @@ public: // メンバ関数
 
 	void OnCollisions();
 
+	void Load();
+
 	void Reset();
 
 	bool IsClearSceneEnd() { return isGameClearSceneEnd; }
@@ -92,7 +94,9 @@ public: // メンバ関数
 
 	Scene NextSceneClear() { return Scene::GAMECLEAR; }
 
-	Scene NextSceneOver() { return Scene::GAMEOVER; }
+	Scene NextSceneOver() { return Scene::TITLE; }
+
+	void ParticleReset();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -130,7 +134,7 @@ private: // メンバ変数
 	// スカイドーム
 	std::unique_ptr<Skydome> skydome_;
 	// 敵
-	std::list<std::unique_ptr<Enemy>> enemys_;
+	std::unique_ptr<Enemy> enemys_[4];
 	// 敵の発生コマンド
 	std::stringstream enemyPopCommands;
 	// アイテム
@@ -162,6 +166,16 @@ private: // メンバ変数
 	bool isGameClearSceneEnd = false;
 
 	bool isGameOverScene = false;
+
+	Sprite* gameOverSprite_ = nullptr;
+
+	// サウンド
+	uint32_t bgmHandle2_;
+	uint32_t playBGM2_;
+	bool isBGM2_;
+	bool isGameOver_;
+
+	uint32_t buttonSound_;
 
 	// サウンド
 	uint32_t bgmHandle_;

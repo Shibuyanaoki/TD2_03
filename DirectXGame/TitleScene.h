@@ -40,10 +40,13 @@ private:
 	Sprite* fadeSprite = nullptr;
 	Vector4 fadeColor = {1.0f, 1.0f, 1.0f, 1.0f};
 
+	bool optionFlag = false;
+
 	// シーンを終わらせるフラグ
 	bool isSceneEnd = false;
 	uint32_t textureHandle_ = 0;
 	Sprite* sprite_ = nullptr;
-
+	uint32_t optionTexture = 0;
+	Sprite* optionSprite_ = nullptr;
 
 };

@@ -7,6 +7,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "Scene.h"
+#include "TextureManager.h"
 
 class ClearScene {
 
@@ -23,6 +24,8 @@ public:
 
 	void Reset();
 
+	void ResetIsBGM();
+
 private:
 
 	DirectXCommon* dxCommon_ = nullptr;
@@ -30,6 +33,17 @@ private:
 	Audio* audio_ = nullptr;
 
 	WorldTransform worldTransform_;
+
+	int count;
+
+	Sprite* clearSprite;
+
+	// サウンド
+	uint32_t bgmHandle_;
+	uint32_t playBGM_;
+	bool isBGM_;
+
+	uint32_t buttonSound_;
 
 	// シーンを終わらせるフラグ
 	bool isSceneEnd = false;

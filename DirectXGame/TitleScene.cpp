@@ -10,8 +10,13 @@ void TitleScene::Initialize() {
 	isBGM_ = false;
 	buttonSound_ = audio_->LoadWave("BGM/Button1.mp3");
 
+	optionFlag = false;
+
+	optionTexture = TextureManager::Load("Option.png");
+	optionSprite_ = Sprite::Create(optionTexture, {0, 0});
+
 	// 背景のスプライト
-	textureHandle_ = TextureManager::Load("TitleAvoid.png");
+	textureHandle_ = TextureManager::Load("Title.png");
 	sprite_ = Sprite::Create(textureHandle_, {640, 360}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.5f, 0.5f});
 
 }
@@ -19,17 +24,26 @@ void TitleScene::Initialize() {
 void TitleScene::Update() {
 
 	if (isBGM_ == false) {
-		playBGM_ = audio_->PlayWave(bgmHandle_, true, 0.5f);
+		playBGM_ = audio_->PlayWave(bgmHandle_, true, 0.3f);
 		isBGM_ = true;
 	}
 
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_A) {
-			Sleep(1 * 300);
-			isSceneEnd = true;
-			audio_->PlayWave(buttonSound_);
+		if (optionFlag == false) {
+			if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_B) {
+				Sleep(1 * 300);
+				audio_->PlayWave(buttonSound_);
+				optionFlag = true;
+			}
+		}
+		if (optionFlag == true) {
+			if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_A) {
+				Sleep(1 * 300);
+				isSceneEnd = true;
+				audio_->PlayWave(buttonSound_);
+			}
 		}
 	}
 }
@@ -46,8 +60,12 @@ void TitleScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
+	if (optionFlag == false) {
 
-	sprite_->Draw();
+		sprite_->Draw();
+	} else if (optionFlag == true) {
+		optionSprite_->Draw();
+	}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -84,4 +102,6 @@ void TitleScene::Draw() {
 void TitleScene::Reset() {
 	audio_->StopWave(playBGM_);
 	isBGM_ = false;
-	isSceneEnd = false; }
+	isSceneEnd = false;
+	optionFlag = false;
+}

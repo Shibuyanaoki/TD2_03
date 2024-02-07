@@ -5,9 +5,26 @@ void ClearScene::Initialize() {
 	worldTransform_.Initialize();
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
+
+	uint32_t clearTexture_ = TextureManager::Load("GameClear.png");
+	clearSprite = Sprite::Create(clearTexture_, {0, 0});
+
+	bgmHandle_ = audio_->LoadWave("BGM/lvup.mp3");
+	isBGM_ = false;
+	buttonSound_ = audio_->LoadWave("BGM/Button1.mp3");
+	count = 0;
 }
 
 void ClearScene::Update() {
+	if (isBGM_ == false) {
+		playBGM_ = audio_->PlayWave(bgmHandle_, true, 0.3f);
+		isBGM_ = true;
+	}
+	count++;
+	if (count >= 360) {
+		audio_->StopWave(playBGM_);
+	}
 
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
@@ -15,6 +32,8 @@ void ClearScene::Update() {
 		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_A) {
 			//Sleep(1 * 300);
 			isSceneEnd = true;
+			audio_->PlayWave(buttonSound_);
+			audio_->StopWave(playBGM_);
 		}
 	}
 }
@@ -57,6 +76,8 @@ void ClearScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+	 
+	clearSprite->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -64,4 +85,10 @@ void ClearScene::Draw() {
 #pragma endregion
 }
 
-void ClearScene::Reset() { isSceneEnd = false; }
+void ClearScene::Reset() {
+	isSceneEnd = false;
+	count = 0;
+	
+}
+
+void ClearScene::ResetIsBGM() { isBGM_ = false; }

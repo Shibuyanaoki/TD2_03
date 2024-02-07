@@ -1,4 +1,5 @@
 ﻿#include "Enemy.h"
+#include "Player.h"
 #include <cassert>
 
 void Enemy::Initialize(Model* model, Vector3 position) {
@@ -8,6 +9,9 @@ void Enemy::Initialize(Model* model, Vector3 position) {
 	// worldTransform_.rotation_.x = 10.0f;
 
 	worldTransform_.translation_ = position;
+
+	kEnemySpeed = 0.1f;
+	count = 0;
 
 	//  NULLポインタチェック
 	assert(model);
@@ -28,23 +32,37 @@ void Enemy::Update(bool direction) {
 	// move_ = Multiply(speed , Normalize(move_));
 	// Matrix4x4 rotationYMatrix = MakeRotateYmatrix(viewProjection_->rotation_.y);
 	//
-	if (input_->PushKey(DIK_R) ) {
+	/*if (input_->PushKey(DIK_R) ) {
 		worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
 		move_ = {0.0f, 0, 0};
 		rot = 0.0f;
 		acceleration = 0.0f;
 		rotationSpeed_ = 0.0f;
 		inRation = 0.15f;
-	}
+	}*/
 	rot -= 0.01f;
 	rotation = MakeRotateYmatrix(rot);
 
-	if (collisionFlag == true) {
+	kEnemySpeed+=0.0003f;
+	if (kEnemySpeed >= 0.8f) {
+		kEnemySpeed = 0.8f;
+	}
+	if (isDead_ == false) {
+		if (collisionFlag == false) {
 
+			Homing(kEnemySpeed);
+		}
+	}
+
+	if (collisionFlag == true) {
+		count++;
+		if (count >= 120) {
+			collisionFlag = false;
+		}
 		if (direction == false) {
 
 			acceleration -= outRation;
-			inRation += 0.001f;
+			inRation += 0.002f;
 			rot -= inRation;
 			move_.x = -cosf(rot);
 			move_.z = -sinf(rot);
@@ -53,7 +71,7 @@ void Enemy::Update(bool direction) {
 		if (direction == true) {
 
 			acceleration -= outRation;
-			inRation += 0.001f;
+			inRation += 0.002f;
 			rot -= inRation;
 			move_.x = +cosf(rot);
 			move_.z = -sinf(rot);
@@ -76,10 +94,10 @@ void Enemy::Update(bool direction) {
 	}
 	// 移動
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move_);
-
-	// 落ちた時の処理
-	falling();
-
+	if (isDead_ == false) {
+		// 落ちた時の処理
+		falling();
+	}
 	/*if (deadCount <= 5) {
 	    isSceneFlag = true;
 	}*/
@@ -91,7 +109,11 @@ void Enemy::Update(bool direction) {
 	ImGui::InputFloat("Acceleration", &outRation, 0.01f);*/
 }
 
-void Enemy::Draw(ViewProjection& viewProjection) { model_->Draw(worldTransform_, viewProjection); }
+void Enemy::Draw(ViewProjection& viewProjection) {
+	if (isDead_ == false) {
+		model_->Draw(worldTransform_, viewProjection);
+	}
+}
 
 const WorldTransform& Enemy::GetWorldTransform() {
 	// TODO: return ステートメントをここに挿入します
@@ -100,6 +122,8 @@ const WorldTransform& Enemy::GetWorldTransform() {
 }
 
 void Enemy::OnCollision(Base* other) {
+	count = 0;
+	kEnemySpeed = 0;
 
 	other->GetWorldPosition().x;
 	GetWorldPosition();
@@ -118,7 +142,7 @@ void Enemy::OnCollision(Base* other) {
 	rot = 0.0f;
 	acceleration = 0.0f;
 	rotationSpeed_ = 0.0f;
-	inRation = 0.15f;
+	inRation = 0.05f;
 	collisionFlag = true;
 	// keyMove_.x = -cosf(radian + 3.14f / 4) * 1.0f;
 	// keyMove_.z = -sinf(radian + 3.14f / 4) * 1.0f;
@@ -136,4 +160,33 @@ void Enemy::falling() {
 void Enemy::OnCollsion() {
 	isDead_ = true;
 	
+}
+
+void Enemy::Homing(float enemySpeed_) {
+	Vector3 A = player_->GetWorldPosition();
+	Vector3 B = Enemy::GetWorldPosition();
+	Vector3 C = Subtract(A, B);
+	Vector3 vector = Normalize(C);
+	vector = Multiply(enemySpeed_, vector);
+	move_.x = vector.x;
+	move_.z = vector.z;
+}
+
+void Enemy::Reset() {
+	isDead_ = false;
+
+	direction_ = 0;
+	radius_ = 2;
+	rotationSpeed_ = 0.0f;
+	radian = 0;
+	move_={0.0f, 0, 0};
+
+	acceleration = 0.0f;
+
+	outRation = 0.01f;
+	inRation = 0.15f;
+	kEnemySpeed = 0.1f;
+
+	collisionFlag = false;
+	count = 0;
 }

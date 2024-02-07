@@ -154,13 +154,13 @@ void Player::Update() {
 		if (inRotation >= inRotMax || outRotation >= outRotMax) {
 			/*	inRotation = inRotMax;
 			    outRotation = outRotMax;*/
-			isSceneFlag = true;
+			//isSceneFlag = true;
 		}
 
 		// 回転数の下限
 		if (inRotation <= inRotMin && outRotation <= outRotMin) {
-			inRotation = inRotMin;
-			outRotation = outRotMin;
+			/*inRotation = inRotMin;
+			outRotation = outRotMin;*/
 		}
 
 		// 行列を定数バッファに転送
@@ -213,10 +213,15 @@ void Player::falling() {
 	if (worldTransform_.translation_.x >= 63 || worldTransform_.translation_.x <= -61 ||
 	    worldTransform_.translation_.z >= 61 || worldTransform_.translation_.z <= -63) {
 		worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
+		life -= 5.0f;
 	}
 }
 
 void Player::Reset() {
+
+	life = 30.0f;
+
+	worldTransform_.translation_ = position_;
 
 	inRotation = 0.15f;
 
@@ -226,6 +231,38 @@ void Player::Reset() {
 
 	isSceneFlag = false;
 
+	move_={0, 0, 0};
+	joyMove_={0, 0, 0};
+	keyMove_={0, 0, 0};
+
+	 radius_ = 2;
+	 rotationSpeed_ = 0.0f;
+	direction_ = false;
+
+	 radian = 0;
+	position_ = {0.0f, 0.0f, -30.0f};
+
+	 joyX = 0;
+	 joyY = 0;
+
+	 acceleration = 0.0f;
+
+	 inRotation = 0.15f;
+	 outRotation = 0.01f;
+
+}
+
+void Player::ResetParticle() {
+	 for (Particle* particle : particles_) {
+		particle->Delete();
+	 }
+	 particles_.remove_if([](Particle* particle) {
+		 if (particle->IsDelete()) {
+			 delete particle;
+			 return true;
+		 }
+		 return false;
+	 });
 }
 
 void Player::OnCollision(Base* other) {

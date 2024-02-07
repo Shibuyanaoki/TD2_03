@@ -55,6 +55,15 @@ public:
 
 	float SetOutRotation(const float OutRot) { return outRotation += OutRot; }
 
+	void SetLife(float life_) { life = life_; }
+	float GetLife() { return life; }
+
+	float Hit() { return life -= 1.0f; }
+
+	void ResetParticle();
+
+	void GameRoopInitialize();
+
 public: // オーバーライド
 	void OnCollision(Base* other) override;
 	
@@ -101,6 +110,8 @@ private:
 	const float outRotMin = 0.01f;
 
 	bool isSceneFlag = false;
+
+	float life =30.0f;
 
 	std::list<Particle*> particles_;
 	Model* particleModel_;

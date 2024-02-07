@@ -12,6 +12,7 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	bool IsDelete() const { return isDelete_; }
+	void Delete() { isDelete_ = true; }
 
 private:
 	WorldTransform worldTransform_;

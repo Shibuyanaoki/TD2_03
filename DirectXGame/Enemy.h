@@ -10,6 +10,8 @@
 #include "Base.h"
 #include "ImGuiManager.h"
 
+class Player;
+
 class Enemy :public Base {
 public:
 	void Initialize(Model* model, Vector3 position);
@@ -49,10 +51,19 @@ public: // オーバーライド
 
 	void OnCollsion();
 
+	void Reset();
+
+	void Homing(float enemySpeed);
+
+	void SetPlayer(Player* player) { player_ = player; }
+
 private:
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
+
+	int count;
+	float kEnemySpeed;
 
 	// モデル
 	Model* model_ = nullptr;
@@ -80,6 +91,8 @@ private:
 
 	float outRation = 0.01f;
 	float inRation = 0.15f;
+
+	Player* player_ = nullptr;
 
 	bool collisionFlag = false;
 };

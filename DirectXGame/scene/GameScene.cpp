@@ -69,10 +69,23 @@ void GameScene::Initialize() {
 	viewProjection_.rotation_ = {88.913f, 0.0f, 0.0f};
 
 	// 敵のCSVファイル読み込み
-	LoadEnemyPopData();
+	//LoadEnemyPopData();
+
+	for (int i = 0; i < 4; i++) {
+		enemys_[i] = std::make_unique<Enemy>();
+	}
+	enemys_[0]->Initialize(modelEnemy_.get(), {40.0f, 0.0f, 20.0f});
+	enemys_[1]->Initialize(modelEnemy_.get(), {-30.0f, 0.0f, -15.0f});
+	enemys_[2]->Initialize(modelEnemy_.get(), {-30.0f, 0.0f, 15.0f});
+	enemys_[3]->Initialize(modelEnemy_.get(), {35.0f, 0.0f, -13.0f});
 
 	// アイテムのCSVファイル読み込み
 	LoadItemPopData();
+
+	bgmHandle2_ = audio_->LoadWave("BGM/GameOverBGM.mp3");
+	isBGM2_ = false;
+	buttonSound_ = audio_->LoadWave("BGM/Button1.mp3");
+	isGameOver_ = false;
 
 	srand((unsigned int)time(nullptr));
 	randomSE_ = (rand() % 3 + 1);
@@ -86,26 +99,37 @@ void GameScene::Initialize() {
 
 	HP = player_->GetOutRotation();
 
+	uint32_t gameOverTexture_ = TextureManager::Load("GameOver.png");
+	gameOverSprite_ = Sprite::Create(gameOverTexture_, {0, 0});
+
 	// 背景のスプライト
 	uint32_t textureHandle_ = TextureManager::Load("HP.png");
-	HPSprite_ = Sprite::Create(textureHandle_, {100, 500});
+	HPSprite_ = Sprite::Create(textureHandle_, {100, 650}, {1,0,0,1});
 }
 
 void GameScene::Update() {
 
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
-	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_B) {
-			Sleep(1 * 300);
-			isGameOverScene = true;
+	if (isGameOver_ == true) {
+
+		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+			if (joyState.Gamepad.wButtons == XINPUT_GAMEPAD_B) {
+				Sleep(1 * 300);
+				isGameOverSceneEnd = true;
+			}
 		}
 	}
 
 	// カメラの向きと自機の向きをそろえる
 	// player_->SetViewRotate(followCamera_->GetViewRotate());
 
-	player_->Update();
+	Vector2 size = {50.0f, -player_->GetLife()*20};
+	HPSprite_->SetSize(size);
+
+	if (isGameOver_ == false) {
+		player_->Update();
+	}
 
 	followCamera_->Update();
 
@@ -117,15 +141,20 @@ void GameScene::Update() {
 
 	spark_->Update();
 
+	if (isGameOver_ == true) {
+		audio_->StopWave(playBGM_);
+	}
+
 	if (isBGM_ == false) {
 		playBGM_ = audio_->PlayWave(bgmHandle_, true, 0.5f);
 		isBGM_ = true;
 	}
-
-	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
-		enemy->Update(player_->GetDirection());
+	if (isGameOver_ == false) {
+		for (int i=0; i < 4; i++) {
+			enemys_[i]->SetPlayer(player_.get());
+			enemys_[i]->Update(player_->GetDirection());
+		}
 	}
-
 	OnCollisions();
 
 	HPSprite_->SetColor(HPColor_);
@@ -177,31 +206,36 @@ void GameScene::Update() {
 
 	ImGui::End();*/
 
-	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
+	/*for (const std::unique_ptr<Enemy>& enemy : enemys_) {
 		if (enemy->IsDead()) {
-			if (deadCount >= 2) {
+			if (deadCount >= 4) {
 				isGameClearSceneEnd = true;
 			} else {
 				deadCount++;
 			}
 		}
+	}*/
+
+	if (enemys_[0]->IsDead() == true && enemys_[1]->IsDead() == true &&
+	    enemys_[2]->IsDead() == true && enemys_[3]->IsDead() == true) {
+		isGameClearSceneEnd = true;
 	}
 
 	// デスフラグの立った敵を削除
-	enemys_.remove_if([](std::unique_ptr<Enemy>& enemy) {
+	/*enemys_.remove_if([](std::unique_ptr<Enemy>& enemy) {
 		if (enemy->IsDead()) {
 			enemy.release();
 			return true;
 		}
 		return false;
-	});
+	});*/
 
 	if (player_->GetIsSceneFlag() == true) {
 		isGameOverSceneEnd = true;
 	}
 
 	// 敵のCSVファイルの更新処理
-	UpdataEnemyPopCommands();
+	//UpdataEnemyPopCommands();
 
 	// アイテムのCSVファイルの更新処理
 	UpdataItemPopCommands();
@@ -261,6 +295,10 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	if (isGameOver_ == true) {
+		gameOverSprite_->Draw();
+	}
 
 	HPSprite_->Draw();
 
@@ -376,7 +414,7 @@ void GameScene::EnemyGenerate(Vector3 position) {
 	Enemy* enemy = new Enemy();
 	enemy->Initialize(modelEnemy_.get(), position);
 
-	enemys_.push_back(static_cast<std::unique_ptr<Enemy>>(enemy));
+	//enemys_.push_back(static_cast<std::unique_ptr<Enemy>>(enemy));
 }
 
 void GameScene::ItemGenerate(Vector3 position) {
@@ -390,54 +428,57 @@ void GameScene::ItemGenerate(Vector3 position) {
 void GameScene::OnCollisions() {
 
 #pragma region PlayerとEnemyの当たり判定
+	if (isGameOver_ == false) {
+		for (const std::unique_ptr<Enemy>& enemy : enemys_) {
+			float dist = CollisionDetection(player_->GetWorldPosition(), enemy->GetWorldPosition());
 
-	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
-		float dist = CollisionDetection(player_->GetWorldPosition(), enemy->GetWorldPosition());
+			// 4 = 二つの円の半径足したもの
+			if (dist <= 4 && enemyCollisionFlag_ == false) {
 
-		// 4 = 二つの円の半径足したもの
-		if (dist <= 4 && enemyCollisionFlag_ == false) {
+				player_->OnCollision(enemy.get());
 
-			player_->OnCollision(enemy.get());
+				// enemy->OnCollsion()
+				enemy->OnCollision(player_.get());
 
-			// enemy->OnCollsion()
-			enemy->OnCollision(player_.get());
-
-			if (player_->GetDirection() == enemy->GetDirection()) {
-				player_->SetInRotation(0.01f);
-				player_->SetOutRotation(0.01f);
-				HPColor_.w -= 0.1f;
-			}
-
-			if (player_->GetDirection() != enemy->GetDirection()) {
-				player_->SetInRotation(-0.01f);
-				player_->SetOutRotation(-0.01f);
-
-				if (HPColor_.w <= 9) {
-					HPColor_.w = 0.9f;
-				} else {
-					HPColor_.w += 0.1f;
+				if (player_->GetDirection() == enemy->GetDirection()) {
+					// player_->SetInRotation(0.01f);
+					// player_->SetOutRotation(0.01f);
+					/*HPColor_.w -= 0.1f;*/
 				}
 
-					
-			}
-			enemyCollisionFlag_ = true;
-			randomSE_ = (rand() % 3 + 1);
-			if (randomSE_ == 1) {
-				audio_->PlayWave(sparkSE_[0]);
-			} else if (randomSE_ == 2) {
-				audio_->PlayWave(sparkSE_[1]);
-			} else if (randomSE_ == 3) {
-				audio_->PlayWave(sparkSE_[2]);
+				if (player_->GetDirection() != enemy->GetDirection()) {
+					// player_->SetInRotation(-0.01f);
+					// player_->SetOutRotation(-0.01f);
+
+					/*if (HPColor_.w <= 9) {
+						HPColor_.w = 0.9f;
+					} else {
+						HPColor_.w += 0.1f;
+					}*/
+				}
+				player_->Hit();
+				enemyCollisionFlag_ = true;
+				randomSE_ = (rand() % 3 + 1);
+				if (randomSE_ == 1) {
+					audio_->PlayWave(sparkSE_[0]);
+				} else if (randomSE_ == 2) {
+					audio_->PlayWave(sparkSE_[1]);
+				} else if (randomSE_ == 3) {
+					audio_->PlayWave(sparkSE_[2]);
+				}
 			}
 		}
-	}
+		if (player_->GetLife() <= 0.0f) {
+			player_->SetLife(0.0f);
+			isGameOver_ = true;
+		}
+		if (enemyCollisionFlag_ == true) {
+			enemyTimer_--;
 
-	if (enemyCollisionFlag_ == true) {
-		enemyTimer_--;
-
-		if (enemyTimer_ <= 0) {
-			enemyCollisionFlag_ = false;
-			enemyTimer_ = 60;
+			if (enemyTimer_ <= 0) {
+				enemyCollisionFlag_ = false;
+				enemyTimer_ = 60;
+			}
 		}
 	}
 
@@ -492,24 +533,41 @@ void GameScene::OnCollisions() {
 #pragma endregion
 }
 
+void GameScene::Load() {// 敵のCSVファイル読み込み
+	LoadEnemyPopData();
+}
+
 void GameScene::Reset() {
 
-	// 敵のCSVファイル読み込み
-	LoadEnemyPopData();
+	
 
 	// アイテムのCSVファイル読み込み
-	LoadItemPopData();
+	//LoadItemPopData();
 
 	isGameClearSceneEnd = false;
 
 	isGameOverSceneEnd = false;
 
+	isGameOver_ = false;
+
 	player_->Reset();
 
-	audio_->StopWave(bgmHandle_);
+	for (int i = 0; i < 4; i++) {
+		enemys_[i]->Reset();
+		enemys_[0]->Initialize(modelEnemy_.get(), {40.0f, 0.0f, 20.0f});
+		enemys_[1]->Initialize(modelEnemy_.get(), {-30.0f, 0.0f, -15.0f});
+		enemys_[2]->Initialize(modelEnemy_.get(), {-30.0f, 0.0f, 15.0f});
+		enemys_[3]->Initialize(modelEnemy_.get(), {35.0f, 0.0f, -13.0f});
+	}
+
+	ParticleReset();
+
+	audio_->StopWave(playBGM_);
 
 	isBGM_ = false;
 
 	HPColor_.w = 0.9f;
 
 }
+
+void GameScene::ParticleReset() { player_->ResetParticle(); }

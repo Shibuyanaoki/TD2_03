@@ -27,6 +27,7 @@ void GameOverScene::Update() {
 			Sleep(1 * 300);
 			isSceneEnd = true;
 			audio_->PlayWave(buttonSound_);
+			audio_->StopWave(playBGM_);
 		}
 	}
 }
@@ -77,7 +78,7 @@ void GameOverScene::Draw() {
 }
 
 void GameOverScene::Reset() { 
-	audio_->StopWave(bgmHandle_);
-	isBGM_ = false;
+	
+	//isBGM_ = false;
 	isSceneEnd = true; 
 }
